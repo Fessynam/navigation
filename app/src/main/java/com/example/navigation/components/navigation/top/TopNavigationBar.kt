@@ -1,21 +1,18 @@
+package com.example.navigation.components.navigation.top
+
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.text.style.TextOverflow
+import androidx.navigation.NavController
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopNavigationBar(
-    title: String
-) {
+fun TopNavigationBar(navController: NavController) {
     TopAppBar(
         title = {
-            Text(
-                text = title,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
+            Text(text = navController.currentBackStackEntry?.destination?.route ?:"Nonexistent")
         }
     )
 }
