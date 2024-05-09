@@ -34,8 +34,8 @@ fun EarningSpendingChart(earnings: List<MonthlyEarning>, spending: List<MonthlyS
         shape = RoundedCornerShape(14.dp),
         color = Color.Black.copy(alpha = 0.1f),
     ) {
-        val red = Color(0xFFFF5252)
-        val green = Color(0xFF4CAF50)
+        val red = Color(0xFFFF5D5D)
+        val green = Color(0xFF63D167)
 
 
         val totalAccountValue = maxOf(earnings.maxOfOrNull { it.amount } ?: 0f,

@@ -47,28 +47,30 @@ fun HomeScreen() {
     val selectedIndex = remember { mutableIntStateOf(0) }
 
     Scaffold(topBar = {
-        CenterAlignedTopAppBar(title = {
-            Text(
-                "Account Details", fontSize = 16.sp, fontWeight = FontWeight.Bold
-            )
-        })
+        CenterAlignedTopAppBar(
+            title = {
+                Text(
+                    "Account Details", fontSize = 16.sp, fontWeight = FontWeight.Bold
+                )
+            }, Modifier.background(Color.Transparent)
+        )
     }) { padding ->
         Box(modifier = Modifier.fillMaxSize()) {
-            val backgroundBrush = when (selectedIndex.intValue) {
-                0 -> Brush.radialGradient(
-                    colors = listOf(Color.Green.copy(alpha = 0.15f), Color.Transparent)
-                )
-
-                else -> Brush.radialGradient(
-                    colors = listOf(Color.Red.copy(alpha = 0.15f), Color.Transparent)
-                )
-            }
-            Box(
-                modifier = Modifier
-                    .size(400.dp)
-                    .background(backgroundBrush)
-                    .align(Alignment.BottomStart)
-            )
+//            val backgroundBrush = when (selectedIndex.intValue) {
+//                0 -> Brush.radialGradient(
+//                    colors = listOf(Color.Green.copy(alpha = 0.1f), Color.Transparent)
+//                )
+//
+//                else -> Brush.radialGradient(
+//                    colors = listOf(Color.Red.copy(alpha = 0.1f), Color.Transparent)
+//                )
+//            }
+//            Box(
+//                modifier = Modifier
+//                    .size(400.dp)
+//                    .background(backgroundBrush)
+//                    .align(Alignment.BottomStart)
+//            )
 
             LazyColumn(
                 modifier = Modifier

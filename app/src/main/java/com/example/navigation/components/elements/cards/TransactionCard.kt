@@ -22,17 +22,18 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.navigation.data.earnings.earnings
 import java.time.LocalDate
 
 @Composable
 fun TransactionCard(date: LocalDate, category: String, amount: Int, type: Int) {
-    val cardColor = if (type == 1) Color.Red else Color.Green
+    val cardColor = if (type == 1) Color(0xFFFF5D5D) else Color(0xFF63D167)
 
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .background(color = cardColor.copy(alpha = 0.2f))
+            .background(color = cardColor.copy(alpha = 0.1f))
             .border(
                 BorderStroke(1.5.dp, cardColor.copy(alpha = 0.8f)),
                 shape = MaterialTheme.shapes.medium
@@ -56,9 +57,9 @@ fun TransactionCard(date: LocalDate, category: String, amount: Int, type: Int) {
             }
             Text(
                 text = amount.toString(),
-                style = MaterialTheme.typography.bodyLarge,
                 fontWeight = FontWeight.Black,
-                color = cardColor.copy(alpha = 0.9f)
+                color = cardColor.copy(alpha = 0.9f),
+                fontSize = (18.sp)
             )
         }
     }
