@@ -16,7 +16,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -35,8 +34,11 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.navigation.components.elements.EarningSpendingSelector
-import com.example.navigation.components.elements.chart.EarningSpendingChart
-import com.example.navigation.data.transections.transactions
+import com.example.navigation.components.vico.linechart.EarningSpendingChart
+import com.example.navigation.data.calculateMonthlyEarnings
+import com.example.navigation.data.calculateMonthlySpending
+import com.example.navigation.data.earnings.earnings
+import com.example.navigation.data.spending.spending
 
 @SuppressLint("DefaultLocale", "NewApi")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -54,11 +56,11 @@ fun HomeScreen(navController: NavController) {
         Box(modifier = Modifier.fillMaxSize()) {
             val backgroundBrush = when (selectedIndex.intValue) {
                 0 -> Brush.radialGradient(
-                    colors = listOf(Color.Green.copy(alpha = 0.2f), Color.Transparent)
+                    colors = listOf(Color.Green.copy(alpha = 0.1f), Color.Transparent)
                 )
 
                 else -> Brush.radialGradient(
-                    colors = listOf(Color.Red.copy(alpha = 0.2f), Color.Transparent)
+                    colors = listOf(Color.Red.copy(alpha = 0.1f), Color.Transparent)
                 )
             }
             Box(
@@ -110,11 +112,11 @@ fun HomeScreen(navController: NavController) {
                             .fillMaxWidth()
                             .height(200.dp)
                             .clip(RoundedCornerShape(14.dp))
-                            .background(MaterialTheme.colorScheme.onSecondaryContainer)
-
                     ) {
                         //TODO: Implement the data visualization
-                        EarningSpendingChart(transactions = transactions)
+                        val monthlyEarnings = calculateMonthlyEarnings(earnings)
+                        val monthlySpending = calculateMonthlySpending(spending)
+                        EarningSpendingChart(earnings = monthlyEarnings, spending = monthlySpending)
                     }
                     Spacer(modifier = Modifier.height(20.dp))
                     HorizontalDivider()
