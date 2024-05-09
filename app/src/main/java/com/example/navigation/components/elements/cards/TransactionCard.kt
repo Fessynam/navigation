@@ -9,7 +9,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -17,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.navigation.data.earnings.earnings
@@ -29,23 +32,37 @@ fun TransactionCard(date: LocalDate, category: String, amount: Int, type: Int) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .border(BorderStroke(1.dp, cardColor.copy(alpha = 0.8f)))
             .background(color = cardColor.copy(alpha = 0.2f))
+            .border(
+                BorderStroke(1.5.dp, cardColor.copy(alpha = 0.8f)),
+                shape = MaterialTheme.shapes.medium
+            )
     ) {
         Row(
-            Modifier
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier
                 .fillMaxWidth()
                 .padding(12.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
+
+            ) {
             Column {
-                Text(text = category, style = MaterialTheme.typography.titleSmall)
+                Text(
+                    text = category,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
+                )
                 Text(text = date.toString(), style = MaterialTheme.typography.bodySmall)
             }
-            Text(text = amount.toString(), style = MaterialTheme.typography.titleMedium)
+            Text(
+                text = amount.toString(),
+                style = MaterialTheme.typography.bodyLarge,
+                fontWeight = FontWeight.Black,
+                color = cardColor.copy(alpha = 0.9f)
+            )
         }
     }
+    Spacer(modifier = Modifier.height(12.dp))
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -55,7 +72,7 @@ fun TransactionCardPreview() {
     Column {
         earnings.forEach { earning ->
             TransactionCard(
-                date = earning.date, category = earning.category, amount = earning.amount, type = 0
+                date = earning.date, category = earning.category, amount = earning.amount, type = 1
             )
         }
     }

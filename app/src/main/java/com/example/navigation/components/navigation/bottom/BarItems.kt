@@ -21,7 +21,7 @@ val barItems = listOf(
         selected = Icons.Filled.Home,
         unselected = Icons.Outlined.Home,
         router = "home",
-        content = { navController -> HomeScreen(navController) }
+        content = { navController -> HomeScreen() }
     ),
 
     Screens(

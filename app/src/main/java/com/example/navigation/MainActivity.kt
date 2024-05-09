@@ -13,7 +13,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.navigation.components.navigation.bottom.BottomNavigationBar
 import com.example.navigation.components.navigation.bottom.barItems
-import com.example.navigation.components.navigation.top.TopNavigationBar
 import com.example.navigation.screen.budget.BudgetScreen
 import com.example.navigation.screen.home.HomeScreen
 import com.example.navigation.screen.notification.NotificationScreen
@@ -41,7 +40,7 @@ class MainActivity : ComponentActivity() {
                         startDestination = "home",
                         modifier = Modifier.padding(padding)
                     ) {
-                        composable("home") { HomeScreen(navController) }
+                        composable("home") { HomeScreen() }
                         composable("budget") { BudgetScreen(navController) }
                         composable("notification") { NotificationScreen(navController) }
                         composable("user") { UserScreen(navController) }

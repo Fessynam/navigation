@@ -31,9 +31,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.Wallpapers
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.navigation.components.elements.EarningSpendingSelector
+import com.example.navigation.components.elements.cards.TransactionCard
 import com.example.navigation.components.vico.linechart.EarningSpendingChart
 import com.example.navigation.data.calculateMonthlyEarnings
 import com.example.navigation.data.calculateMonthlySpending
@@ -43,7 +43,7 @@ import com.example.navigation.data.spending.spending
 @SuppressLint("DefaultLocale", "NewApi")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(navController: NavController) {
+fun HomeScreen() {
     val selectedIndex = remember { mutableIntStateOf(0) }
 
     Scaffold(topBar = {
@@ -56,16 +56,16 @@ fun HomeScreen(navController: NavController) {
         Box(modifier = Modifier.fillMaxSize()) {
             val backgroundBrush = when (selectedIndex.intValue) {
                 0 -> Brush.radialGradient(
-                    colors = listOf(Color.Green.copy(alpha = 0.1f), Color.Transparent)
+                    colors = listOf(Color.Green.copy(alpha = 0.15f), Color.Transparent)
                 )
 
                 else -> Brush.radialGradient(
-                    colors = listOf(Color.Red.copy(alpha = 0.1f), Color.Transparent)
+                    colors = listOf(Color.Red.copy(alpha = 0.15f), Color.Transparent)
                 )
             }
             Box(
                 modifier = Modifier
-                    .size(300.dp)
+                    .size(400.dp)
                     .background(backgroundBrush)
                     .align(Alignment.BottomStart)
             )
@@ -123,11 +123,33 @@ fun HomeScreen(navController: NavController) {
                     Spacer(modifier = Modifier.height(20.dp))
                 }
                 item {
-                    Text(
-                        text = "Recent ${if (selectedIndex.intValue == 0) "Earning" else "Spending"}",
-                        fontSize = 14.sp
-                    )
+                    val title = if (selectedIndex.intValue == 0) "Earnings" else "Spending"
+
+                    Text("Recent $title", fontSize = 14.sp)
+
                     Spacer(modifier = Modifier.height(10.dp))
+
+                    Column {
+                        if (selectedIndex.intValue == 0) {
+                            earnings.forEach { earning ->
+                                TransactionCard(
+                                    date = earning.date,
+                                    category = earning.category,
+                                    amount = earning.amount,
+                                    type = 0
+                                )
+                            }
+                        } else {
+                            spending.forEach { spending ->
+                                TransactionCard(
+                                    date = spending.date,
+                                    category = spending.category,
+                                    amount = spending.amount,
+                                    type = 1
+                                )
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -139,5 +161,5 @@ fun HomeScreen(navController: NavController) {
 @Composable
 fun HomeScreenPreview() {
     val navController = rememberNavController()
-    HomeScreen(navController)
+    HomeScreen()
 }

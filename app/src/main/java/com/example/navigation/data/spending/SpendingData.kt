@@ -23,10 +23,3 @@ val spending: List<Spending> = listOf(
     Spending(LocalDate.of(2024, 11, 3), "Utilities", 1800)
 
 )
-
-@RequiresApi(Build.VERSION_CODES.O)
-fun main(){
-    for (data in spending){
-        println(data.date)
-    }
-}
