@@ -1,117 +1,100 @@
-@file:Suppress("DEPRECATION")
+@file:Suppress("EqualsBetweenInconvertibleTypes")
 
 package com.example.navigation.components.elements.cards
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Circle
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material3.*
+import androidx.compose.material3.DismissDirection
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissBoxState
+import androidx.compose.material3.SwipeToDismissBoxValue
+import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
 @Composable
-fun BudgetCardList(
-    category: String,
-    modifier: Modifier = Modifier,
+fun SwipeToDeleteContainer(
+    item: String,
+    onDelete: (String) -> Unit,
+    animationDuration: Int = 500,
+    content: @Composable (String) -> Unit,
 ) {
-    val swipeDirection = setOf(SwipeToDismissBoxValue.EndToStart)
+    var isRemoved by remember { mutableStateOf(false) }
+    val state = rememberSwipeToDismissBoxState(confirmValueChange = {
+        if (it.equals(SwipeToDismissBoxValue.EndToStart)) {
+            isRemoved = true
+        }
+        it == SwipeToDismissBoxValue.EndToStart
+    })
 
-    LazyColumn(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp),
+    AnimatedVisibility(
+        visible = !isRemoved, exit = shrinkVertically(
+            animationSpec = tween(durationMillis = animationDuration), shrinkTowards = Alignment.Top
+        ) + fadeOut()
     ) {
-        item {
-            BudgetCardItem(
-                category = category,
-                swipeDirections = swipeDirection,
-            )
+        SwipeToDismissBox(state = state, enableDismissFromStartToEnd = true, backgroundContent = {
+            SwipeDeleteBackground(swipeDismissState = state)
+        }, content = {
+            Box(modifier = Modifier.padding(start = 24.dp, end = 16.dp)) {
+                content(item)
+            }
+        })
+    }
+
+
+
+    LaunchedEffect(key1 = isRemoved) {
+        if (isRemoved) {
+            onDelete(item)
         }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BudgetCardItem(
-    category: String,
-    swipeDirections: Set<SwipeToDismissBoxValue>,
-    modifier: Modifier = Modifier,
+fun SwipeDeleteBackground(
+    swipeDismissState: SwipeToDismissBoxState,
 ) {
-    SwipeToDismiss(
-        state = rememberSwipeToDismissBoxState(),
-        background = {
-            SwipeBackground()
-        },
-        dismissContent = {
-            CategoryContent(category = category, modifier = modifier)
-        },
-        modifier = modifier,
-        directions = swipeDirections
-    )
-}
-
-@Composable
-private fun SwipeBackground() {
-    Box(
-        Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.2f)),
-        contentAlignment = Alignment.CenterEnd
-    ) {
-        Row(
-            modifier = Modifier.padding(end = 16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(text = "Delete Category", color = Color.White)
-            Spacer(modifier = Modifier.width(8.dp))
-            Icon(
-                imageVector = Icons.Filled.Delete,
-                contentDescription = null,
-                tint = Color.White,
-                modifier = Modifier.size(24.dp)
-            )
-        }
-    }
-}
-
-@Composable
-private fun CategoryContent(category: String, modifier: Modifier = Modifier) {
-    Column(modifier.fillMaxWidth()) {
-        Box(
-            Modifier
-                .fillMaxWidth()
-                .height(150.dp)
-                .background(Color.Black)
-        ) {
-            // Display the chart content here
-            // SimpleBarChart(data = listOf(100f, 200f, 300f))
-        }
-        Column {
-            Spacer(modifier = Modifier.height(10.dp))
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                // Indicator for each category
-                Icon(
-                    imageVector = Icons.Filled.Circle,
-                    contentDescription = null,
-                    tint = Color.Red,
-                    modifier = Modifier.size(16.dp)
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(category, fontSize = 16.sp)
+    val color by remember {
+        derivedStateOf {
+            if (swipeDismissState.dismissDirection.equals(DismissDirection.EndToStart)) {
+                Color.Red
+            } else {
+                Color.Transparent
             }
         }
     }
-}
 
-@Preview
-@Composable
-private fun BudgetCardPreview() {
-    BudgetCardList(category = "Food")
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color)
+            .padding(16.dp),
+        contentAlignment = Alignment.CenterEnd
+    ) {
+        Icon(
+            imageVector = Icons.Default.Delete, contentDescription = "Delete", tint = Color.White
+        )
+    }
 }

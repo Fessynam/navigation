@@ -14,151 +14,91 @@
  * limitations under the License.
  */
 
+package com.patrykandpatrick.vico.sample.previews
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottomAxis
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStartAxis
-import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLayer
-import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineSpec
+import com.patrykandpatrick.vico.compose.cartesian.decoration.rememberHorizontalBox
+import com.patrykandpatrick.vico.compose.cartesian.decoration.rememberHorizontalLine
+import com.patrykandpatrick.vico.compose.cartesian.layer.rememberColumnCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
-import com.patrykandpatrick.vico.compose.common.shader.color
-import com.patrykandpatrick.vico.compose.common.shader.verticalGradient
-import com.patrykandpatrick.vico.core.cartesian.data.AxisValueOverrider
+import com.patrykandpatrick.vico.compose.cartesian.rememberVicoScrollState
+import com.patrykandpatrick.vico.compose.common.ProvideVicoTheme
+import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
+import com.patrykandpatrick.vico.compose.common.component.rememberShapeComponent
+import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
+import com.patrykandpatrick.vico.compose.common.of
+import com.patrykandpatrick.vico.compose.common.shader.toDynamicShader
+import com.patrykandpatrick.vico.compose.common.vicoTheme
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
-import com.patrykandpatrick.vico.core.cartesian.data.LineCartesianLayerModel
-import com.patrykandpatrick.vico.core.common.shader.DynamicShader
+import com.patrykandpatrick.vico.core.cartesian.data.ColumnCartesianLayerModel
+import com.patrykandpatrick.vico.core.common.Dimensions
+import com.patrykandpatrick.vico.core.common.VerticalPosition
+import com.patrykandpatrick.vico.core.common.shader.ComponentShader
+import com.patrykandpatrick.vico.core.common.shape.Shape
 
-private val model1 = CartesianChartModel(LineCartesianLayerModel.build { series(0, 2, 4, 0, 2) })
+private val model = CartesianChartModel(ColumnCartesianLayerModel.build { series(1, 2, 3, 4) })
 
-private val model2 =
-    CartesianChartModel(
-        LineCartesianLayerModel.build { series(0, 2, 4, 0, 2) },
-        LineCartesianLayerModel.build { series(1, 3, 4, 1, 3) },
-    )
+val Color.Companion.DimmedGray: Color
+    get() = Color(0xFFAAAAAA)
 
-private val model3 =
-    CartesianChartModel(
-        LineCartesianLayerModel.build {
-            series(3, 2, 2, 3, 1)
-            series(1, 3, 1, 2, 3)
-        },
-    )
-
-@Preview("Line Chart Dark", widthDp = 200)
 @Composable
-fun LineChartDark() {
+private fun ProvidePreviewVicoTheme(content: @Composable () -> Unit) {
     Surface(
-        shape = RoundedCornerShape(8.dp),
-        color = Color.Black,
+        color = Color.Transparent,
+        modifier =
+        Modifier
+            .background(color = Color.LightGray, shape = RoundedCornerShape(size = 4.dp))
+            .padding(8.dp),
     ) {
-        val yellow = Color(0xFFFFAA4A)
-        val pink = Color(0xFFFF4AAA)
-
-        CartesianChartHost(
-            modifier = Modifier.padding(8.dp),
-            chart =
-            rememberCartesianChart(
-                rememberLineCartesianLayer(
-                    listOf(
-                        rememberLineSpec(
-                            shader = DynamicShader.color(yellow),
-                            backgroundShader =
-                            DynamicShader.verticalGradient(
-                                arrayOf(yellow.copy(alpha = 0.5f), yellow.copy(alpha = 0f)),
-                            ),
-                        ),
-                        rememberLineSpec(
-                            shader = DynamicShader.color(pink),
-                            backgroundShader =
-                            DynamicShader.verticalGradient(
-                                arrayOf(pink.copy(alpha = 0.5f), pink.copy(alpha = 0f)),
-                            ),
-                        ),
-                    ),
-                    axisValueOverrider = AxisValueOverrider.fixed(maxY = 4f),
-                ),
+        ProvideVicoTheme(
+            vicoTheme.copy(
+                columnCartesianLayerColors = listOf(Color.DimmedGray),
+                lineColor = Color.DimmedGray,
+                textColor = Color.DimmedGray,
             ),
-            model = model3,
+            content,
         )
     }
 }
 
-@Preview("Line Chart", widthDp = 200)
+@Preview(widthDp = 250)
 @Composable
-fun RegularLineChart() {
-    CartesianChartHost(
-        chart = rememberCartesianChart(rememberLineCartesianLayer(), startAxis = rememberStartAxis()),
-        model = model1,
-    )
-}
-
-@Preview("Line Chart Expanded", widthDp = 200)
-@Composable
-fun RegularLineChartExpanded() {
-    CartesianChartHost(
-        chart =
-        rememberCartesianChart(
-            rememberLineCartesianLayer(axisValueOverrider = AxisValueOverrider.fixed(minY = -1f, maxY = 5f)),
-            startAxis = rememberStartAxis(),
-        ),
-        model = model1,
-    )
-}
-
-@Preview("Line Chart Collapsed", widthDp = 200)
-@Composable
-fun RegularLineChartCollapsed() {
-    CartesianChartHost(
-        chart =
-        rememberCartesianChart(
-            rememberLineCartesianLayer(axisValueOverrider = AxisValueOverrider.fixed(minY = 1f, maxY = 3f)),
-            startAxis = rememberStartAxis(),
-        ),
-        model = model1,
-    )
-}
-
-@Preview("Composed Chart", widthDp = 200)
-@Composable
-fun ComposedLineChart() {
-    CartesianChartHost(
-        chart =
-        rememberCartesianChart(
-            rememberLineCartesianLayer(),
-            rememberLineCartesianLayer(
+fun ThresholdLine() {
+    ProvidePreviewVicoTheme {
+        CartesianChartHost(
+            modifier = Modifier,
+            chart =
+            rememberCartesianChart(
+                rememberColumnCartesianLayer(),
+                startAxis = rememberStartAxis(),
+                bottomAxis = rememberBottomAxis(),
+                decorations =
                 listOf(
-                    rememberLineSpec(
-                        shader = DynamicShader.color(Color.Blue),
-                        backgroundShader =
-                        DynamicShader.verticalGradient(
-                            arrayOf(Color.Blue.copy(alpha = 0.4f), Color.Blue.copy(alpha = 0f)),
-                        ),
+                    rememberHorizontalLine(
+                        y = { 3f },
+                        line = rememberLineComponent(color = Color.DimmedGray.copy(alpha = 0.8f), thickness = 50.dp),
+//                        labelComponent =
+//                        rememberTextComponent(
+//                            Color.Black,
+//                            padding = Dimensions.of(horizontal = 8.dp),
+//                        ),
                     ),
                 ),
             ),
-            startAxis = rememberStartAxis(),
-        ),
-        model = model2,
-    )
-}
-
-@Preview("Composed Chart Collapsed", widthDp = 200)
-@Composable
-fun ComposedLineChartCollapsed() {
-    CartesianChartHost(
-        chart =
-        rememberCartesianChart(
-            rememberLineCartesianLayer(axisValueOverrider = AxisValueOverrider.fixed(minY = 1f, maxY = 3f)),
-            rememberLineCartesianLayer(axisValueOverrider = AxisValueOverrider.fixed(minY = 1f, maxY = 3f)),
-            startAxis = rememberStartAxis(),
-        ),
-        model = model2,
-    )
+            model = model,
+            scrollState = rememberVicoScrollState(scrollEnabled = false),
+        )
+    }
 }
