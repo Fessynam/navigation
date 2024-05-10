@@ -32,7 +32,7 @@ import com.example.navigation.components.elements.cards.SwipeToDeleteContainer
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BudgetScreen(navController: NavController) {
-    val categories = remember { mutableStateListOf("Food", "Health", "Entertainment") }
+    val categories = remember { mutableStateListOf("Food", "Health", "Entertainment", "Gaming", "Porn", "Education") }
 
     Scaffold(topBar = {
         CenterAlignedTopAppBar(

@@ -31,4 +31,16 @@ val earnings: List<Earnings> = listOf(
     Earnings(LocalDate.of(2024, 12, 2), "Random Earnings", 2800),
     Earnings(LocalDate.of(2024, 12, 3), "Random Earnings", 2900),
 
-)
+    Earnings(LocalDate.of(2023, 1, 1), "Company Earnings", 4500),
+    Earnings(LocalDate.of(2023, 1, 2), "Random Earnings", 3000),
+    Earnings(LocalDate.of(2023, 2, 1), "Company Earnings", 6000),
+    Earnings(LocalDate.of(2023, 2, 2), "Random Earnings", 2500),
+    Earnings(LocalDate.of(2023, 2, 3), "Random Earnings", 2700),
+    Earnings(LocalDate.of(2023, 3, 1), "Company Earnings", 4800),
+    Earnings(LocalDate.of(2023, 3, 2), "Random Earnings", 3200),
+    Earnings(LocalDate.of(2023, 4, 1), "Company Earnings", 5100),
+    Earnings(LocalDate.of(2023, 4, 2), "Random Earnings", 2200),
+    Earnings(LocalDate.of(2023, 4, 3), "Random Earnings", 3300),
+
+
+    )

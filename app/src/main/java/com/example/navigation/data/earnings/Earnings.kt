@@ -9,6 +9,7 @@ data class Earnings(
 )
 
 data class MonthlyEarning(
+    val year: Int,
     val month: Int,
     val amount: Float
 )

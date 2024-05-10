@@ -3,7 +3,6 @@ package com.example.navigation.components.vico.linechart
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
@@ -37,19 +36,26 @@ fun EarningSpendingChart(earnings: List<MonthlyEarning>, spending: List<MonthlyS
         val red = Color(0xFFFF5D5D)
         val green = Color(0xFF63D167)
 
+        // Find years and months where both earnings and spending exist
+        val commonYearMonths = earnings.map { it.year to it.month }
+            .intersect(spending.map { it.year to it.month }.toSet())
 
+        val earningValues =
+            earnings.filter { it.year to it.month in commonYearMonths }.map { it.amount }
+        val earningLabels = commonYearMonths.map { "${it.second}/${it.first}" }
+
+        val spendingValues =
+            spending.filter { it.year to it.month in commonYearMonths }.map { it.amount }
+        val spendingLabels = commonYearMonths.map { "${it.second}/${it.first}" }
+
+        fun main() {
+
+            println(earningValues)
+            println(spendingValues)
+        }
+        main()
         val totalAccountValue = maxOf(earnings.maxOfOrNull { it.amount } ?: 0f,
             spending.maxOfOrNull { it.amount } ?: 0f)
-
-        // Find months where both earnings and spending exist
-        val commonMonths = earnings.map { it.month }.intersect(spending.map { it.month }.toSet())
-        val months = earnings.map { it.month }.union(spending.map { it.month })
-
-        val earningValues = earnings.filter { it.month in commonMonths }.map { it.amount }
-        val earningLabels = commonMonths.map { it.toString() }
-
-        val spendingValues = spending.filter { it.month in commonMonths }.map { it.amount }
-        val spendingLabels = commonMonths.map { it.toString() }
 
         CartesianChartHost(
             chart = rememberCartesianChart(
@@ -70,7 +76,7 @@ fun EarningSpendingChart(earnings: List<MonthlyEarning>, spending: List<MonthlyS
                     ),
                     axisValueOverrider = AxisValueOverrider.fixed(maxY = totalAccountValue),
                 ),
-               // bottomAxis = rememberBottomAxis(commonMonths.map { it.toString() }),
+                // bottomAxis = rememberBottomAxis(commonMonths.map { it.toString() }),
             ), model = CartesianChartModel(LineCartesianLayerModel.build {
                 series(earningValues)
                 series(spendingValues)
@@ -79,8 +85,9 @@ fun EarningSpendingChart(earnings: List<MonthlyEarning>, spending: List<MonthlyS
     }
 }
 
+
 @RequiresApi(Build.VERSION_CODES.O)
-fun main(){
+fun main() {
     val monthlyEarnings = calculateMonthlyEarnings(earnings)
     val monthlySpending = calculateMonthlySpending(spending)
     println(monthlyEarnings)

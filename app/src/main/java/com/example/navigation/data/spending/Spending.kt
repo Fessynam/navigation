@@ -9,6 +9,7 @@ data class Spending(
 )
 
 data class MonthlySpending(
+    val year: Int,
     val month: Int,
     val amount: Float
 )

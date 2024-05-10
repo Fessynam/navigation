@@ -7,13 +7,13 @@ import com.example.navigation.data.spending.Spending
 
 @RequiresApi(Build.VERSION_CODES.O)
 fun calculateMonthlySpending(data: List<Spending>): List<MonthlySpending> {
-    val monthlySpending = mutableMapOf<Int, Float>()
+    val monthlySpending = mutableMapOf<Pair<Int, Int>, Float>()
 
     for (spending in data) {
-        val month = spending.date.monthValue
-        monthlySpending[month] = monthlySpending.getOrDefault(month, 0f) + spending.amount
+        val monthYear = Pair(spending.date.monthValue, spending.date.year)
+        monthlySpending[monthYear] = monthlySpending.getOrDefault(monthYear, 0f) + spending.amount
     }
 
-    return monthlySpending.toList().sortedBy { it.first }
-        .map { (month, spending) -> MonthlySpending(month, spending) }
+    return monthlySpending.toList().sortedBy { it.first.second * 100 + it.first.first }
+        .map { (monthYear, earning) -> MonthlySpending(monthYear.second, monthYear.first, earning) }
 }
