@@ -31,14 +31,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.example.navigation.data.budget.Budget
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
 @Composable
 fun SwipeToDeleteContainer(
-    item: String,
-    onDelete: (String) -> Unit,
+    item: Budget,
+    onDelete: (Budget) -> Unit,
     animationDuration: Int = 500,
-    content: @Composable (String) -> Unit,
+    content: @Composable (Budget) -> Unit,
 ) {
     var isRemoved by remember { mutableStateOf(false) }
     val state = rememberSwipeToDismissBoxState(confirmValueChange = {
@@ -56,13 +57,11 @@ fun SwipeToDeleteContainer(
         SwipeToDismissBox(state = state, enableDismissFromStartToEnd = true, backgroundContent = {
             SwipeDeleteBackground(swipeDismissState = state)
         }, content = {
-            Box(modifier = Modifier.padding(start = 24.dp, end = 16.dp)) {
+            Box() {
                 content(item)
             }
         })
     }
-
-
 
     LaunchedEffect(key1 = isRemoved) {
         if (isRemoved) {

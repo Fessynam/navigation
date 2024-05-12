@@ -13,3 +13,7 @@ data class MonthlySpending(
     val month: Int,
     val amount: Float
 )
+
+data class SpendingCategories(
+    val categories: String
+)

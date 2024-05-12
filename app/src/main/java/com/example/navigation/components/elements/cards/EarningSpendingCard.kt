@@ -1,4 +1,4 @@
-package com.example.navigation.components.elements
+package com.example.navigation.components.elements.cards
 
 import androidx.compose.runtime.Composable
 
