@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.smartspend"
+    namespace = "com.tuyoleni.smartspend"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.smartspend"
+        applicationId = "com.tuyoleni.smartspend"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
@@ -71,7 +71,7 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
 
     implementation("androidx.compose.material:material:1.6.7")
-    
+
     implementation("androidx.compose.material:material-icons-extended:1.6.7")
     implementation("androidx.navigation:navigation-compose:2.5.3")
 
