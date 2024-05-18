@@ -1,14 +1,15 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    id("io.realm.kotlin") version "1.16.0"
 }
 
 android {
-    namespace = "com.example.navigation"
+    namespace = "com.example.smartspend"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.navigation"
+        applicationId = "com.example.smartspend"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
@@ -69,6 +70,8 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
+    implementation("androidx.compose.material:material:1.6.7")
+    
     implementation("androidx.compose.material:material-icons-extended:1.6.7")
     implementation("androidx.navigation:navigation-compose:2.5.3")
 
@@ -76,4 +79,7 @@ dependencies {
     implementation("com.patrykandpatrick.vico:compose-m3:2.0.0-alpha.19")
     implementation("com.patrykandpatrick.vico:core:2.0.0-alpha.19")
     implementation("com.patrykandpatrick.vico:views:2.0.0-alpha.19")
+
+    implementation("io.realm.kotlin:library-sync:1.16.0")
+
 }
