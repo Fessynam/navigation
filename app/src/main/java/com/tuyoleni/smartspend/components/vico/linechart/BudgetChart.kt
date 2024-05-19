@@ -1,13 +1,12 @@
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
-import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottomAxis
-import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStartAxis
 import com.patrykandpatrick.vico.compose.cartesian.decoration.rememberHorizontalLine
 import com.patrykandpatrick.vico.compose.cartesian.fullWidth
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLayer
@@ -47,35 +46,29 @@ fun BudgetChart(
 
     val spendingValues = filteredSpendingData.map { it.amount }
     //val dates = filteredSpendingData.map { it.date.toString() }
-    val green = Color(0xFF69F0AE)
-    val red = Color(0xFFFF5252)
+    val chartColor = MaterialTheme.colorScheme.primary
     //val accountBalance =
-        calculateAccountBalance(filteredSpendingData, filteredEarningsData).toFloat()
+    calculateAccountBalance(filteredSpendingData, filteredEarningsData).toFloat()
 
     val maxSpendingValue = spendingValues.maxOrNull()?.toFloat() ?: 0f
     val maxY = maxOf(threshHold.toFloat() + (maxSpendingValue / 5f))
+    val scrollState = rememberScrollState()
 
     CartesianChartHost(
         chart = rememberCartesianChart(
             rememberLineCartesianLayer(
                 listOf(
                     rememberLineSpec(
-                        shader = DynamicShader.color(green),
+                        shader = DynamicShader.color(chartColor),
                         backgroundShader = DynamicShader.verticalGradient(
-                            arrayOf(green.copy(alpha = 0.5f), green.copy(alpha = 0f)),
+                            arrayOf(chartColor.copy(alpha = 0.8f), chartColor.copy(alpha = 0f)),
                         ),
-                    ),
-                    rememberLineSpec(
-                        shader = DynamicShader.color(red),
-                        backgroundShader = DynamicShader.verticalGradient(
-                            arrayOf(red.copy(alpha = 0.5f), red.copy(alpha = 0.1f)),
-                        ),
-                    ),
+                    )
                 ),
                 axisValueOverrider = AxisValueOverrider.fixed(maxY = maxY),
             ),
-            bottomAxis = rememberBottomAxis(),
-            startAxis = rememberStartAxis(),
+//            bottomAxis = rememberBottomAxis(),
+//            startAxis = rememberStartAxis(),
             decorations = listOf(
                 rememberHorizontalLine(
                     y = { threshHold.toFloat() },

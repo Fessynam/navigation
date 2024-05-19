@@ -2,6 +2,7 @@ package com.tuyoleni.smartspend.components.navigation.top
 
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -18,6 +19,6 @@ fun ScreenTopAppBar(title: String) {
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold
             )
-        }, colors = TopAppBarDefaults.centerAlignedTopAppBarColors()
+        }, colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = MaterialTheme.colorScheme.surfaceContainer)
     )
 }

@@ -2,7 +2,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
@@ -21,14 +21,14 @@ fun BudgetItem(budget: Budget, spendingData: List<Spending>) {
     Box(
         modifier = Modifier
             .clip(RoundedCornerShape(14.dp))
-            .fillMaxWidth()
-            .height(200.dp)
-            .background(MaterialTheme.colorScheme.onPrimary)
+            .fillMaxSize()
+            .height(180.dp)
+            .background(MaterialTheme.colorScheme.surfaceContainer)
     ) {
         BudgetChart(
             spendingData = spendingData,
             earningsData = earnings,
-            date = budget.created.minusDays(100),
+            date = budget.created,
             threshHold = budget.threshHold,
             category = budget.category
         )

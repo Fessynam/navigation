@@ -12,7 +12,6 @@ import androidx.compose.runtime.MutableState
 @Composable
 fun EarningSpendingSelector(selectedIndex: MutableState<Int>) {
     val options = mutableListOf("Earning", "Spending")
-
     MultiChoiceSegmentedButtonRow {
         options.forEachIndexed { index, option ->
             SegmentedButton(
@@ -25,7 +24,8 @@ fun EarningSpendingSelector(selectedIndex: MutableState<Int>) {
                 shape = SegmentedButtonDefaults.itemShape(
                     index = index,
                     count = options.size
-                )
+                ),
+                icon = { SegmentedButtonDefaults.Icon(active = false) }
             ) {
                 Text(text = option)
             }

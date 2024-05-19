@@ -1,6 +1,7 @@
 package com.tuyoleni.smartspend.screen.home
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,10 +10,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -21,12 +23,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.Wallpapers
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.compose.rememberNavController
 import com.tuyoleni.smartspend.components.elements.EarningSpendingSelector
 import com.tuyoleni.smartspend.components.elements.cards.TransactionCard
 import com.tuyoleni.smartspend.components.navigation.top.ScreenTopAppBar
@@ -38,7 +41,6 @@ import com.tuyoleni.smartspend.data.earnings.earnings
 import com.tuyoleni.smartspend.data.spending.spending
 
 @SuppressLint("DefaultLocale", "NewApi")
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen() {
     val selectedIndex = remember { mutableIntStateOf(0) }
@@ -57,7 +59,7 @@ fun HomeScreen() {
 //            }
 //            Box(
 //                modifier = Modifier
-//                    .size(400.dp)
+//                    .size(1200.dp)
 //                    .background(backgroundBrush)
 //                    .align(Alignment.BottomStart)
 //            )
@@ -104,11 +106,11 @@ fun HomeScreen() {
                     Spacer(modifier = Modifier.height(10.dp))
                     Box(
                         modifier = Modifier
+                            .clip(RoundedCornerShape(14.dp))
                             .fillMaxWidth()
                             .height(200.dp)
-                            .clip(RoundedCornerShape(14.dp))
+                            .background(MaterialTheme.colorScheme.surfaceContainer)
                     ) {
-                        //TODO: Implement the data visualization
                         val monthlyEarnings = calculateMonthlyEarnings(earnings)
                         val monthlySpending = calculateMonthlySpending(spending)
                         EarningSpendingChart(earnings = monthlyEarnings, spending = monthlySpending)
@@ -155,6 +157,5 @@ fun HomeScreen() {
 @Preview(showBackground = true, wallpaper = Wallpapers.RED_DOMINATED_EXAMPLE)
 @Composable
 fun HomeScreenPreview() {
-    val navController = rememberNavController()
     HomeScreen()
 }

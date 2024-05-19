@@ -5,13 +5,18 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.tuyoleni.smartspend.components.navigation.top.ScreenTopAppBar
 import com.tuyoleni.smartspend.data.budget.Budget
 import com.tuyoleni.smartspend.screen.budget.newiplementation.bottomsheet.BudgetCreationBottomSheet
 
@@ -32,15 +37,24 @@ fun BudgetScreenScaffold(
     categories: MutableList<String>,
     budgetData: MutableList<Budget>
 ) {
-    Scaffold(
-        topBar = {
-            ScreenTopAppBar(
-                title = navController.currentBackStackEntry?.destination?.route ?: "Nonexistent"
-            )
-        },
-        floatingActionButton = { CreateBudgetFab(onShowBottomSheetChange) }
-    ) { padding ->
-        Box(modifier = Modifier.padding(top = padding.calculateTopPadding())) {
+    Scaffold(topBar = {
+        CenterAlignedTopAppBar(
+            title = {
+                Text(
+                    text = navController.currentBackStackEntry?.destination?.route ?: "Nonexistent",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            },
+            actions = {
+                CreateBudgetFab(onShowBottomSheetChange)
+            },
+            colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = MaterialTheme.colorScheme.surfaceContainer)
+        )
+    }) { padding ->
+        Box(
+            modifier = Modifier.padding(top = padding.calculateTopPadding())
+        ) {
             BudgetList(budgetData)
             if (showBottomSheet) {
                 BudgetCreationBottomSheet(

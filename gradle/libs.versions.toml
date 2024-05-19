@@ -1,21 +1,38 @@
 [versions]
 agp = "8.4.0"
+core = "2.0.0-alpha.19"
+firebaseBom = "33.0.0"
 kotlin = "1.9.0"
 coreKtx = "1.13.1"
 junit = "4.13.2"
 junitVersion = "1.1.5"
 espressoCore = "3.5.1"
+librarySync = "1.16.0"
 lifecycleRuntimeKtx = "2.7.0"
 activityCompose = "1.8.0"
 composeBom = "2023.08.00"
+materialIconsExtended = "1.6.7"
 navigationCompose = "2.7.7"
 constraintlayoutCompose = "1.0.1"
 generativeai = "0.4.0"
 material3Android = "1.2.1"
 constraintlayoutComposeAndroid = "1.1.0-alpha13"
+navigationComposeVersion = "2.5.3"
+playServicesAuth = "21.1.1"
+views = "2.0.0-alpha.19"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-material = { module = "androidx.compose.material:material", version.ref = "materialIconsExtended" }
+androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "materialIconsExtended" }
+androidx-navigation-compose-v253 = { module = "androidx.navigation:navigation-compose", version.ref = "navigationComposeVersion" }
+compose = { module = "com.patrykandpatrick.vico:compose", version.ref = "core" }
+compose-m3 = { module = "com.patrykandpatrick.vico:compose-m3", version.ref = "core" }
+core = { module = "com.patrykandpatrick.vico:core", version.ref = "core" }
+firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
+firebase-auth = { module = "com.google.firebase:firebase-auth" }
+firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
+firebase-firestore = { module = "com.google.firebase:firebase-firestore" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -34,6 +51,9 @@ androidx-constraintlayout-compose = { group = "androidx.constraintlayout", name 
 generativeai = { group = "com.google.ai.client.generativeai", name = "generativeai", version.ref = "generativeai" }
 androidx-material3-android = { group = "androidx.compose.material3", name = "material3-android", version.ref = "material3Android" }
 androidx-constraintlayout-compose-android = { group = "androidx.constraintlayout", name = "constraintlayout-compose-android", version.ref = "constraintlayoutComposeAndroid" }
+play-services-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "playServicesAuth" }
+views = { module = "com.patrykandpatrick.vico:views", version.ref = "views" }
+library-sync = { module = "io.realm.kotlin:library-sync", version.ref = "librarySync" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

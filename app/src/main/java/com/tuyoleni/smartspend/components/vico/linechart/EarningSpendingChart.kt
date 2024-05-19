@@ -31,7 +31,7 @@ import com.tuyoleni.smartspend.data.spending.spending
 fun EarningSpendingChart(earnings: List<MonthlyEarning>, spending: List<MonthlySpending>) {
     Surface(
         shape = RoundedCornerShape(14.dp),
-        color = Color.Black.copy(alpha = 0.1f),
+        color = Color.Transparent
     ) {
         val red = Color(0xFFFF5D5D)
         val green = Color(0xFF63D167)
