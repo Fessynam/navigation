@@ -1,6 +1,8 @@
 package com.tuyoleni.smartspend
 
 import android.content.Context
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
@@ -93,6 +95,7 @@ object FireStoreRepository {
             }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun toBudget(data: Map<String, Any>): Budget {
         val threshHold = data["threshHold"] as Long
         val createdString = data["created"] as String
@@ -101,6 +104,25 @@ object FireStoreRepository {
         return Budget(threshHold.toInt(), created, category)
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun toObjectEarning(data: Map<String, Any>): Earnings {
+        val amount = data["amount"] as Long
+        val createdString = data["date"] as String
+        val date = LocalDate.parse(createdString)
+        val category = data["category"] as String
+        return Earnings(date, category, amount.toInt())
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun toObjectSpending(data: Map<String, Any>): Spending {
+        val amount = data["amount"] as Long
+        val createdString = data["date"] as String
+        val date = LocalDate.parse(createdString)
+        val category = data["category"] as String
+        return Spending(date, category, amount.toInt())
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
     fun getBudget(callback: (List<Budget>) -> Unit) {
         firestore.collection(BUDGET_COLLECTION).get().addOnSuccessListener { documents ->
             val budgetList = mutableListOf<Budget>()
@@ -119,9 +141,8 @@ object FireStoreRepository {
         firestore.collection(BUDGET_COLLECTION).whereEqualTo("category", budget.category).get()
             .addOnSuccessListener { documents ->
                 if (documents.isEmpty) {
-                    // Budget does not exist, do nothing
+                    //Do some
                 } else {
-                    // Budget exists, delete it
                     documents.first().reference.delete()
                 }
             }.addOnFailureListener { e ->
@@ -141,40 +162,60 @@ object FireStoreRepository {
     }
 
     fun addSpending(spending: Spending) {
-        firestore.collection(SPENDING_COLLECTION).add(spending)
-            .addOnSuccessListener { documentReference ->
-                println("Spending data added with ID: ${documentReference.id}")
-            }.addOnFailureListener { e ->
-                println("Error adding spending data: ${e.message}")
-            }
+        try {
+            val spendingMap = spending.toMap()
+            firestore.collection(SPENDING_COLLECTION).add(spendingMap)
+                .addOnSuccessListener { documentReference ->
+                    println("Spending data added with ID: ${documentReference.id}")
+                }.addOnFailureListener { e ->
+                    throw IOException("Error adding spending data: ${e.message}", e)
+                }
+        } catch (e: IOException) {
+            println("Error converting spending to map: ${e.message}")
+        }
     }
 
     fun addEarnings(earnings: Earnings) {
-        firestore.collection(EARNINGS_COLLECTION).add(earnings)
-            .addOnSuccessListener { documentReference ->
-                println("Earnings data added with ID: ${documentReference.id}")
-            }.addOnFailureListener { e ->
-                println("Error adding earnings data: ${e.message}")
+        try {
+            val earningsMap = earnings.toMap()
+            firestore.collection(EARNINGS_COLLECTION).add(earningsMap)
+                .addOnSuccessListener { documentReference ->
+                    println("Earnings data added with ID: ${documentReference.id}")
+                }.addOnFailureListener { e ->
+                    throw IOException("Error adding earnings data: ${e.message}", e)
+                }
+        } catch (e: IOException) {
+            println("Error converting earnings to map: ${e.message}")
+        }
+    }
+
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun getSpending(): List<Spending> {
+        val spendingList = mutableListOf<Spending>()
+        firestore.collection(SPENDING_COLLECTION).get().addOnSuccessListener { documents ->
+            for (document in documents) {
+                val spending = toObjectSpending(document.data)
+                spendingList.add(spending)
             }
+        }.addOnFailureListener { e ->
+            println("Error getting Spending: ${e.message}")
+        }
+        return spendingList
     }
 
-    fun getSpending(callback: (List<Spending>) -> Unit) {
-        firestore.collection(SPENDING_COLLECTION).get().addOnSuccessListener { result ->
-            val spendingList = result.toObjects(Spending::class.java)
-            callback(spendingList)
-        }.addOnFailureListener { e ->
-            println("Error getting spending data: ${e.message}")
-            callback(emptyList())
-        }
-    }
 
-    fun getEarnings(callback: (List<Earnings>) -> Unit) {
-        firestore.collection(EARNINGS_COLLECTION).get().addOnSuccessListener { result ->
-            val earningsList = result.toObjects(Earnings::class.java)
-            callback(earningsList)
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun getEarnings(): List<Earnings> {
+        val earningsList = mutableListOf<Earnings>()
+        firestore.collection(EARNINGS_COLLECTION).get().addOnSuccessListener { documents ->
+            for (document in documents) {
+                val earnings = toObjectEarning(document.data)
+                earningsList.add(earnings)
+            }
         }.addOnFailureListener { e ->
-            println("Error getting earnings data: ${e.message}")
-            callback(emptyList())
+            println("Error getting Earnings: ${e.message}")
         }
+        return earningsList
     }
 }

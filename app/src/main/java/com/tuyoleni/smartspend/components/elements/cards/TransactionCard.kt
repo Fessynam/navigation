@@ -67,16 +67,3 @@ fun TransactionCard(date: LocalDate, category: String, amount: Int, type: Int) {
     }
     Spacer(modifier = Modifier.height(12.dp))
 }
-
-@RequiresApi(Build.VERSION_CODES.O)
-@Preview(showBackground = true)
-@Composable
-fun TransactionCardPreview() {
-    Column {
-        earnings.forEach { earning ->
-            TransactionCard(
-                date = earning.date, category = earning.category, amount = earning.amount, type = 1
-            )
-        }
-    }
-}

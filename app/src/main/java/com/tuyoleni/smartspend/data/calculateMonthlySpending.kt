@@ -6,7 +6,7 @@ import com.tuyoleni.smartspend.data.spending.MonthlySpending
 import com.tuyoleni.smartspend.data.spending.Spending
 
 @RequiresApi(Build.VERSION_CODES.O)
-fun calculateMonthlySpending(data: List<Spending>): List<MonthlySpending> {
+suspend fun calculateMonthlySpending(data: List<Spending>): List<MonthlySpending> {
     val monthlySpending = mutableMapOf<Pair<Int, Int>, Float>()
 
     for (spending in data) {
@@ -14,6 +14,7 @@ fun calculateMonthlySpending(data: List<Spending>): List<MonthlySpending> {
         monthlySpending[monthYear] = monthlySpending.getOrDefault(monthYear, 0f) + spending.amount
     }
 
-    return monthlySpending.toList().sortedBy { it.first.second * 100 + it.first.first }
-        .map { (monthYear, earning) -> MonthlySpending(monthYear.second, monthYear.first, earning) }
+    return monthlySpending.entries.map { (monthYear, amount) ->
+        MonthlySpending(monthYear.second, monthYear.first, amount)
+    }.sortedBy { it.year * 100 + it.month }
 }

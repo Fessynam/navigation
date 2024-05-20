@@ -1,5 +1,6 @@
 package com.tuyoleni.smartspend
 
+import android.annotation.SuppressLint
 import android.os.Build.VERSION_CODES.O
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -19,12 +20,19 @@ import com.tuyoleni.smartspend.authentication.login.LoginScreen
 import com.tuyoleni.smartspend.authentication.register.RegisterScreen
 import com.tuyoleni.smartspend.components.navigation.bottom.BottomNavigationBar
 import com.tuyoleni.smartspend.components.navigation.bottom.barItems
+import com.tuyoleni.smartspend.data.SpendingEarningManager
 import com.tuyoleni.smartspend.screen.budget.BudgetScreen
 import com.tuyoleni.smartspend.screen.home.HomeScreen
 import com.tuyoleni.smartspend.screen.notification.NotificationScreen
 import com.tuyoleni.smartspend.screen.profile.UserScreen
 import com.tuyoleni.smartspend.ui.theme.SmartSpendTheme
-import com.tuyoleni.smartspend.data.SpendingEarningManager
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.time.LocalDate
+import java.time.Month
+import kotlin.random.Random
 
 
 class MainActivity : ComponentActivity() {
@@ -32,6 +40,7 @@ class MainActivity : ComponentActivity() {
         val auth: FirebaseAuth by lazy { FirebaseAuth.getInstance() }
     }
 
+    @SuppressLint("CoroutineCreationDuringComposition")
     @RequiresApi(O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,10 +55,17 @@ class MainActivity : ComponentActivity() {
 
                 Scaffold(bottomBar = {
                     if (isLoggedIn) {
-//                        val spendingManager = SpendingEarningManager(FireStoreRepository)
-//                        spendingManager.addSpending("Food", 2000)
-//                        spendingManager.addEarnings("Salary", 5000)
-                        BottomNavigationBar(screens = barItems, navController = navController)
+                        CoroutineScope(Dispatchers.Main).launch {
+                            try {
+                                withContext(Dispatchers.IO) {
+                                    generateRandomTransactions() // Execute the function in a background thread
+                                }
+                                println("Random transactions generated successfully!")
+                            } catch (e: Exception) {
+                                println("Error generating random transactions: ${e.message}")
+                            }
+                        }
+                        BottomNavigationBar (screens = barItems, navController = navController)
                     }
                 }, containerColor = MaterialTheme.colorScheme.surfaceContainer) { padding ->
                     NavHost(
@@ -69,6 +85,32 @@ class MainActivity : ComponentActivity() {
                     }
                 }
             }
+        }
+    }
+
+    @RequiresApi(O)
+    suspend fun generateRandomTransactions() {
+        val spendingManager = SpendingEarningManager(FireStoreRepository)
+        val random = Random(System.currentTimeMillis()) // Initialize random generator
+
+        // Loop through 12 months
+        for (month in Month.entries) {
+            val year = LocalDate.now().year // Get current year
+            val numDaysInMonth = month.length(false) // Get number of days in the month
+
+            repeat(4) {
+                val day = random.nextInt(1, numDaysInMonth + 1)
+                val amount = random.nextInt(100, 5000)
+                val category = listOf(
+                    "Food", "Entertainment", "Utilities", "Transport"
+                ).random()
+                val date = LocalDate.of(year, month, day)
+                spendingManager.addSpending(date, category, amount)
+            }
+
+            spendingManager.addEarnings(LocalDate.of(year, month, 30), "Salary", 5000)
+            spendingManager.addEarnings(LocalDate.of(year, month, 30).minusMonths(1), "Salary", 10000)
+            spendingManager.addEarnings(LocalDate.of(year, month, 30).minusMonths(2), "Salary", 8000)
         }
     }
 }
