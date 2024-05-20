@@ -2,8 +2,8 @@ package com.tuyoleni.smartspend.screen.budget.newiplementation.bottomsheet
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import com.tuyoleni.smartspend.FireStoreRepository
 import com.tuyoleni.smartspend.data.budget.Budget
-import com.tuyoleni.smartspend.data.spending.spending
 import java.time.LocalDate
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -14,34 +14,18 @@ fun createBudget(
     categories: MutableList<String>,
     budgetData: MutableList<Budget>
 ) {
-    var newBudgets = mutableListOf<Budget>()
-    val category = if (selectedCategory.isNotEmpty()) {
-        selectedCategory
-    } else if (newCategory.isNotEmpty()) {
-        newCategory
+    if (selectedCategory.isNotEmpty() || newCategory.isNotEmpty()) {
+        val newBudget = Budget(threshHold = threshHold,
+            created = LocalDate.now(),
+            category = selectedCategory.ifEmpty { newCategory })
+        FireStoreRepository.addBudget(newBudget)
+
+        if (newCategory.isNotEmpty() && !categories.contains(newCategory)) {
+            categories.add(newCategory)
+        }
+
+        println("Category: ${newBudget.category}, Threshold: ${newBudget.threshHold}, Created: ${newBudget.created}")
     } else {
-        ""
-    }
-
-    if (category.isNotEmpty()) {
-        newBudgets = spending.map {
-            Budget(
-                threshHold = threshHold,
-                created = LocalDate.now(),
-                category = category
-            )
-        }.distinctBy { it.category }.toMutableList()
-    }
-
-    if (selectedCategory.isNotEmpty()) {
-        categories.add(selectedCategory)
-    } else if (newCategory.isNotEmpty()) {
-        categories.add(newCategory)
-    }
-
-    budgetData.addAll(newBudgets)
-
-    budgetData.forEach { budget ->
-        println("Category: ${budget.category}, Threshold: ${budget.threshHold}, Created: ${budget.created}")
+        println("Please select a category or enter a new category $newCategory")
     }
 }

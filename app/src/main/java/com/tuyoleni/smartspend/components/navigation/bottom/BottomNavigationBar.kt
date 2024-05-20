@@ -1,10 +1,8 @@
 package com.tuyoleni.smartspend.components.navigation.bottom
 
-import androidx.compose.material.MaterialTheme.colors
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarDefaults
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable

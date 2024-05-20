@@ -63,6 +63,7 @@ dependencies {
     implementation(libs.generativeai)
     implementation(libs.androidx.material3.android)
     implementation(libs.androidx.constraintlayout.compose.android)
+  //  implementation(libs.compose.preview.renderer)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -83,6 +84,4 @@ dependencies {
     implementation(libs.firebase.firestore)
     implementation(libs.firebase.auth)
     implementation(libs.play.services.auth)
-
-
 }

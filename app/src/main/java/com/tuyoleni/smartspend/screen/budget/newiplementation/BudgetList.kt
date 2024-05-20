@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.tuyoleni.smartspend.FireStoreRepository
 import com.tuyoleni.smartspend.components.elements.cards.SwipeToDeleteContainer
 import com.tuyoleni.smartspend.data.budget.Budget
 import com.tuyoleni.smartspend.data.spending.spending
@@ -32,7 +33,10 @@ fun BudgetList(budgetData: MutableList<Budget>) {
             .padding(horizontal = 16.dp)
     ) {
         items(items = budgetData, key = { "${it.category}_${it.created}" }) { budget ->
-            SwipeToDeleteContainer(item = budget, onDelete = { budgetData.remove(budget) }) {
+            SwipeToDeleteContainer(item = budget, onDelete = {
+                budgetData.remove(budget)
+                FireStoreRepository.deleteBudget(budget)
+            }) {
                 Spacer(modifier = Modifier.height(16.dp))
                 Column(
                     Modifier
@@ -52,7 +56,6 @@ fun BudgetList(budgetData: MutableList<Budget>) {
 
                     val spendingData = spending.filter { it.category == budget.category }
                     BudgetItem(budget = budget, spendingData = spendingData)
-
 
                     Spacer(modifier = Modifier.height(16.dp))
 

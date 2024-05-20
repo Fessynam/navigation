@@ -13,6 +13,10 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.google.firebase.FirebaseApp
+import com.google.firebase.auth.FirebaseAuth
+import com.tuyoleni.smartspend.authentication.login.LoginScreen
+import com.tuyoleni.smartspend.authentication.register.RegisterScreen
 import com.tuyoleni.smartspend.components.navigation.bottom.BottomNavigationBar
 import com.tuyoleni.smartspend.components.navigation.bottom.barItems
 import com.tuyoleni.smartspend.screen.budget.BudgetScreen
@@ -20,28 +24,48 @@ import com.tuyoleni.smartspend.screen.home.HomeScreen
 import com.tuyoleni.smartspend.screen.notification.NotificationScreen
 import com.tuyoleni.smartspend.screen.profile.UserScreen
 import com.tuyoleni.smartspend.ui.theme.SmartSpendTheme
+import com.tuyoleni.smartspend.data.SpendingEarningManager
+
 
 class MainActivity : ComponentActivity() {
+    companion object {
+        val auth: FirebaseAuth by lazy { FirebaseAuth.getInstance() }
+    }
+
     @RequiresApi(O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         enableEdgeToEdge()
+        FirebaseApp.initializeApp(this)
         setContent {
             SmartSpendTheme {
                 val navController = rememberNavController()
+                val isLoggedIn = auth.currentUser != null
+                val startDestination = if (isLoggedIn) "home" else "login"
 
                 Scaffold(bottomBar = {
-                    BottomNavigationBar(screens = barItems, navController = navController)
+                    if (isLoggedIn) {
+//                        val spendingManager = SpendingEarningManager(FireStoreRepository)
+//                        spendingManager.addSpending("Food", 2000)
+//                        spendingManager.addEarnings("Salary", 5000)
+                        BottomNavigationBar(screens = barItems, navController = navController)
+                    }
                 }, containerColor = MaterialTheme.colorScheme.surfaceContainer) { padding ->
                     NavHost(
                         navController = navController,
-                        startDestination = "home",
+                        startDestination = startDestination,
                         modifier = Modifier.padding(padding)
                     ) {
-                        composable("home") { HomeScreen() }
-                        composable("budget") { BudgetScreen(navController) }
-                        composable("notification") { NotificationScreen(navController) }
-                        composable("user") { UserScreen(navController) }
+                        composable("login") { LoginScreen(navController) }
+                        composable("signup") { RegisterScreen(navController) }
+
+                        if (isLoggedIn) {
+                            composable("home") { HomeScreen() }
+                            composable("budget") { BudgetScreen(navController) }
+                            composable("notification") { NotificationScreen(navController) }
+                            composable("user") { UserScreen(navController) }
+                        }
                     }
                 }
             }

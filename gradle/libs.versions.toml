@@ -20,6 +20,7 @@ constraintlayoutComposeAndroid = "1.1.0-alpha13"
 navigationComposeVersion = "2.5.3"
 playServicesAuth = "21.1.1"
 views = "2.0.0-alpha.19"
+composePreviewRenderer = "0.0.1-alpha01"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -54,6 +55,7 @@ androidx-constraintlayout-compose-android = { group = "androidx.constraintlayout
 play-services-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "playServicesAuth" }
 views = { module = "com.patrykandpatrick.vico:views", version.ref = "views" }
 library-sync = { module = "io.realm.kotlin:library-sync", version.ref = "librarySync" }
+compose-preview-renderer = { group = "com.android.tools.compose", name = "compose-preview-renderer", version.ref = "composePreviewRenderer" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
