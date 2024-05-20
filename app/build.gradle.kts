@@ -1,14 +1,16 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    id("io.realm.kotlin") version "1.16.0"
+    id("com.google.gms.google-services")
 }
 
 android {
-    namespace = "com.example.navigation"
+    namespace = "com.tuyoleni.smartspend"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.navigation"
+        applicationId = "com.tuyoleni.smartspend"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
@@ -61,6 +63,7 @@ dependencies {
     implementation(libs.generativeai)
     implementation(libs.androidx.material3.android)
     implementation(libs.androidx.constraintlayout.compose.android)
+  //  implementation(libs.compose.preview.renderer)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -68,12 +71,17 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-
-    implementation("androidx.compose.material:material-icons-extended:1.6.7")
-    implementation("androidx.navigation:navigation-compose:2.5.3")
-
-    implementation("com.patrykandpatrick.vico:compose:2.0.0-alpha.19")
-    implementation("com.patrykandpatrick.vico:compose-m3:2.0.0-alpha.19")
-    implementation("com.patrykandpatrick.vico:core:2.0.0-alpha.19")
-    implementation("com.patrykandpatrick.vico:views:2.0.0-alpha.19")
+    implementation(libs.androidx.material)
+    implementation(libs.androidx.material.icons.extended)
+    implementation(libs.androidx.navigation.compose.v253)
+    implementation(libs.compose)
+    implementation(libs.compose.m3)
+    implementation(libs.core)
+    implementation(libs.views)
+    implementation(libs.library.sync)
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.firestore)
+    implementation(libs.firebase.auth)
+    implementation(libs.play.services.auth)
 }

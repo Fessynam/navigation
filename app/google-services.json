@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "616364556023",
+    "project_id": "smartspend-app",
+    "storage_bucket": "smartspend-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:616364556023:android:cd46dfd93477fed01e9df2",
+        "android_client_info": {
+          "package_name": "com.tuyoleni.smartspend"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "616364556023-vh6vq0l8k81oje0u7oj4l2snd57l2tjg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA0W2_cydqzKs_IIjtrvJTEtZ_iS0pvX_0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "616364556023-vh6vq0l8k81oje0u7oj4l2snd57l2tjg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
