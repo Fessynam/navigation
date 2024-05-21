@@ -29,12 +29,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.tuyoleni.smartspend.MainActivity.Companion.auth
+import com.google.firebase.auth.FirebaseAuth
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UserScreen(navController: NavController) {
     var showDropdownMenu by rememberSaveable { mutableStateOf(false) }
+    val auth = FirebaseAuth.getInstance()
+
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -97,6 +99,7 @@ fun UserScreen(navController: NavController) {
                 .padding(top = padding.calculateTopPadding()),
         ) {
             //TODO: Implement the profile screen
+
         }
     }
 }

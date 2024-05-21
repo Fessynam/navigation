@@ -7,13 +7,15 @@ import com.tuyoleni.smartspend.FireStoreRepository
 import com.tuyoleni.smartspend.data.earnings.Earnings
 import com.tuyoleni.smartspend.data.spending.Spending
 import java.time.LocalDate
-// this class contain s the function to add spending 
+
+// this class contain s the function to add spending
 class SpendingEarningManager(private val fireStoreRepository: FireStoreRepository) {
     @RequiresApi(Build.VERSION_CODES.O)
-    fun addSpending(date: LocalDate, category: String, amount: Int) {
+    suspend fun addSpending(date: LocalDate, category: String, amount: Int) {
         val newSpending = Spending(date, category, amount)
         try {
             fireStoreRepository.addSpending(newSpending)
+
         } catch (e: FirebaseFirestoreException) {
             // Handle Firestore specific exceptions here
         } catch (e: Exception) {
@@ -22,7 +24,7 @@ class SpendingEarningManager(private val fireStoreRepository: FireStoreRepositor
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun addEarnings(date: LocalDate, category: String, amount: Int) {
+    suspend fun addEarnings(date: LocalDate, category: String, amount: Int) {
         val newEarnings = Earnings(date, category, amount)
         try {
             fireStoreRepository.addEarnings(newEarnings)

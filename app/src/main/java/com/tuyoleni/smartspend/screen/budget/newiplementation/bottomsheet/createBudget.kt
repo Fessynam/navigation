@@ -4,6 +4,9 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import com.tuyoleni.smartspend.FireStoreRepository
 import com.tuyoleni.smartspend.data.budget.Budget
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -18,7 +21,10 @@ fun createBudget(
         val newBudget = Budget(threshHold = threshHold,
             created = LocalDate.now(),
             category = selectedCategory.ifEmpty { newCategory })
-        FireStoreRepository.addBudget(newBudget)
+        CoroutineScope(Dispatchers.Default).launch {
+
+            FireStoreRepository.addBudget(newBudget)
+        }
 
         if (newCategory.isNotEmpty() && !categories.contains(newCategory)) {
             categories.add(newCategory)

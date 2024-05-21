@@ -20,40 +20,6 @@ import java.time.LocalDate
 
 val firestore = FirebaseFirestore.getInstance()
 
-// Authentication Functions
-fun registerUser(user: User, navController: NavController) {
-    val auth = FirebaseAuth.getInstance() // Initialize in non-static context
-
-    auth.createUserWithEmailAndPassword(user.email, user.password).addOnCompleteListener { task ->
-        if (task.isSuccessful) {
-            navController.navigate("login")
-        } else {
-            println("Registration failed: ${task.exception?.message}")
-            // Handle registration failure
-        }
-    }
-}
-
-@Composable
-fun LoginUser(user: User, navController: NavController, context: Context) {
-    val auth = FirebaseAuth.getInstance() // Initialize in non-static context
-
-    auth.signInWithEmailAndPassword(user.email, user.password).addOnCompleteListener { task ->
-        if (task.isSuccessful) {
-            navController.navigate("home")
-        } else {
-            println("Login failed: ${task.exception?.message}")
-            // Handle login failure with SnackBar
-        }
-    }
-
-    val snackbarHostState = remember { SnackbarHostState() }
-    SnackbarHost(hostState = snackbarHostState)
-
-    LaunchedEffect(key1 = true) {
-        snackbarHostState.showSnackbar("Login failed. Please try again.")
-    }
-}
 
 // Firestore Repository
 object FireStoreRepository {
@@ -62,28 +28,6 @@ object FireStoreRepository {
     private const val EARNINGS_COLLECTION = "earnings"
     private const val USERS_COLLECTION = "users"
     private const val BUDGET_COLLECTION = "budgets"
-
-    fun addUser(user: User) {
-        firestore.collection(USERS_COLLECTION).add(user).addOnSuccessListener { documentReference ->
-            println("User added with ID: ${documentReference.id}")
-        }.addOnFailureListener { e ->
-            println("Error adding user: ${e.message}")
-        }
-    }
-
-    fun addBudget(budget: Budget) {
-        try {
-            val budgetMap = budget.toMap()
-            firestore.collection(BUDGET_COLLECTION).add(budgetMap)
-                .addOnSuccessListener { documentReference ->
-                    println("Budget added with ID: ${documentReference.id}")
-                }.addOnFailureListener { e ->
-                    throw IOException("Error adding budget: ${e.message}", e)
-                }
-        } catch (e: Exception) {
-            throw IOException("Error converting budget to map: ${e.message}", e)
-        }
-    }
 
     private fun updateBudget(documentId: String, budget: Budget) {
         val budgetMap = budget.toMap()
@@ -122,8 +66,65 @@ object FireStoreRepository {
         return Spending(date, category, amount.toInt())
     }
 
+    suspend fun addUser(user: User) {
+        firestore.collection(USERS_COLLECTION).add(user).addOnSuccessListener { documentReference ->
+            println("User added with ID: ${documentReference.id}")
+        }.addOnFailureListener { e ->
+            println("Error adding user: ${e.message}")
+        }
+    }
+
+    // Authentication Functions
+    fun registerUser(user: User, navController: NavController) {
+        val auth = FirebaseAuth.getInstance() // Initialize in non-static context
+
+        auth.createUserWithEmailAndPassword(user.email, user.password).addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                navController.navigate("login")
+            } else {
+                println("Registration failed: ${task.exception?.message}")
+                // Handle registration failure
+            }
+        }
+    }
+
+    @Composable
+    fun LoginUser(user: User, navController: NavController) {
+        val auth = FirebaseAuth.getInstance() // Initialize in non-static context
+
+        auth.signInWithEmailAndPassword(user.email, user.password).addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                navController.navigate("home")
+            } else {
+                println("Login failed: ${task.exception?.message}")
+                // Handle login failure with SnackBar
+            }
+        }
+
+        val snackbarHostState = remember { SnackbarHostState() }
+        SnackbarHost(hostState = snackbarHostState)
+
+        LaunchedEffect(key1 = true) {
+            snackbarHostState.showSnackbar("Login failed. Please try again.")
+        }
+    }
+
+    suspend fun addBudget(budget: Budget) {
+        try {
+            val budgetMap = budget.toMap()
+            firestore.collection(BUDGET_COLLECTION).add(budgetMap)
+                .addOnSuccessListener { documentReference ->
+                    println("Budget added with ID: ${documentReference.id}")
+                }.addOnFailureListener { e ->
+                    throw IOException("Error adding budget: ${e.message}", e)
+                }
+        } catch (e: Exception) {
+            throw IOException("Error converting budget to map: ${e.message}", e)
+        }
+    }
+
     @RequiresApi(Build.VERSION_CODES.O)
-    fun getBudget(callback: (List<Budget>) -> Unit) {
+    suspend fun getBudget(callback: (List<Budget>) -> Unit) {
         firestore.collection(BUDGET_COLLECTION).get().addOnSuccessListener { documents ->
             val budgetList = mutableListOf<Budget>()
             for (document in documents) {
@@ -137,7 +138,7 @@ object FireStoreRepository {
         }
     }
 
-    fun deleteBudget(budget: Budget) {
+    suspend fun deleteBudget(budget: Budget) {
         firestore.collection(BUDGET_COLLECTION).whereEqualTo("category", budget.category).get()
             .addOnSuccessListener { documents ->
                 if (documents.isEmpty) {
@@ -150,7 +151,7 @@ object FireStoreRepository {
             }
     }
 
-    fun getUser(uid: String, callback: (User?) -> Unit) {
+    suspend fun getUser(uid: String, callback: (User?) -> Unit) {
         val userDocRef = firestore.collection(USERS_COLLECTION).document(uid)
         userDocRef.get().addOnSuccessListener { documentSnapshot ->
             val user = documentSnapshot.toObject(User::class.java)
@@ -161,7 +162,7 @@ object FireStoreRepository {
         }
     }
 
-    fun addSpending(spending: Spending) {
+    suspend fun addSpending(spending: Spending) {
         try {
             val spendingMap = spending.toMap()
             firestore.collection(SPENDING_COLLECTION).add(spendingMap)
@@ -175,7 +176,7 @@ object FireStoreRepository {
         }
     }
 
-    fun addEarnings(earnings: Earnings) {
+    suspend fun addEarnings(earnings: Earnings) {
         try {
             val earningsMap = earnings.toMap()
             firestore.collection(EARNINGS_COLLECTION).add(earningsMap)

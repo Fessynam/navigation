@@ -22,7 +22,9 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.tuyoleni.smartspend.FireStoreRepository
 import com.tuyoleni.smartspend.authentication.User
-import com.tuyoleni.smartspend.registerUser
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @Composable
 fun RegisterScreen(navController: NavController) {
@@ -62,8 +64,11 @@ fun RegisterScreen(navController: NavController) {
         Spacer(modifier = Modifier.height(16.dp))
         Button(
             onClick = {
-                FireStoreRepository.addUser(user)
-                registerUser(user, navController)
+                CoroutineScope(Dispatchers.Default).launch{
+                    FireStoreRepository.addUser(user)
+                    FireStoreRepository.registerUser(user, navController)
+                }
+
             }, modifier = Modifier.fillMaxWidth()
         ) {
             Text("Register")

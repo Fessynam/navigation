@@ -23,6 +23,9 @@ import com.tuyoleni.smartspend.FireStoreRepository
 import com.tuyoleni.smartspend.components.elements.cards.SwipeToDeleteContainer
 import com.tuyoleni.smartspend.data.budget.Budget
 import com.tuyoleni.smartspend.data.spending.spending
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @RequiresApi(O)
 @Composable
@@ -35,7 +38,10 @@ fun BudgetList(budgetData: MutableList<Budget>) {
         items(items = budgetData, key = { "${it.category}_${it.created}" }) { budget ->
             SwipeToDeleteContainer(item = budget, onDelete = {
                 budgetData.remove(budget)
-                FireStoreRepository.deleteBudget(budget)
+                CoroutineScope(Dispatchers.Default).launch {
+
+                    FireStoreRepository.deleteBudget(budget)
+                }
             }) {
                 Spacer(modifier = Modifier.height(16.dp))
                 Column(

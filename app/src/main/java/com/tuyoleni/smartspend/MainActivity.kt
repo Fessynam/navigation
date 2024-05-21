@@ -36,10 +36,6 @@ import kotlin.random.Random
 
 
 class MainActivity : ComponentActivity() {
-    companion object {
-        val auth: FirebaseAuth by lazy { FirebaseAuth.getInstance() }
-    }
-
     @SuppressLint("CoroutineCreationDuringComposition")
     @RequiresApi(O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,6 +45,7 @@ class MainActivity : ComponentActivity() {
         FirebaseApp.initializeApp(this)
         setContent {
             SmartSpendTheme {
+                val auth = FirebaseAuth.getInstance()
                 val navController = rememberNavController()
                 val isLoggedIn = auth.currentUser != null
                 val startDestination = if (isLoggedIn) "home" else "login"
@@ -65,7 +62,7 @@ class MainActivity : ComponentActivity() {
                                 println("Error generating random transactions: ${e.message}")
                             }
                         }
-                        BottomNavigationBar (screens = barItems, navController = navController)
+                        BottomNavigationBar(screens = barItems, navController = navController)
                     }
                 }, containerColor = MaterialTheme.colorScheme.surfaceContainer) { padding ->
                     NavHost(
@@ -109,8 +106,12 @@ class MainActivity : ComponentActivity() {
             }
 
             spendingManager.addEarnings(LocalDate.of(year, month, 30), "Salary", 5000)
-            spendingManager.addEarnings(LocalDate.of(year, month, 30).minusMonths(1), "Salary", 10000)
-            spendingManager.addEarnings(LocalDate.of(year, month, 30).minusMonths(2), "Salary", 8000)
+            spendingManager.addEarnings(
+                LocalDate.of(year, month, 30).minusMonths(1), "Salary", 10000
+            )
+            spendingManager.addEarnings(
+                LocalDate.of(year, month, 30).minusMonths(2), "Salary", 8000
+            )
         }
     }
 }

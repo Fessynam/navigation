@@ -109,7 +109,6 @@ fun HomeScreen() {
                         }
 
                         if (earningSpendingData == null) {
-                            // Display a loading indicator while data is being fetched
                             CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
                         } else {
                             val (earnings, spending) = earningSpendingData!!

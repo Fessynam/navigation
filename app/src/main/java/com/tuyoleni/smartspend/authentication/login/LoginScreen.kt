@@ -14,6 +14,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -23,7 +24,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.tuyoleni.smartspend.MainActivity.Companion.auth
+import com.google.firebase.auth.FirebaseAuth
+import com.tuyoleni.smartspend.authentication.User
 import com.tuyoleni.smartspend.components.navigation.top.ScreenTopAppBar
 
 
@@ -32,7 +34,11 @@ fun LoginScreen(navController: NavController) {
     var email by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
     val coroutineScope = rememberCoroutineScope()
-    val snackbarHostState = remember { SnackbarHostState() }
+    val snackbarHostState = remember { SnackbarHostState() } // Moved outside of LaunchedEffect
+    val auth = FirebaseAuth.getInstance()
+    val user = User(
+        name = "", email = email, password = password
+    )
 
     Scaffold(topBar = {
         ScreenTopAppBar(
@@ -70,14 +76,25 @@ fun LoginScreen(navController: NavController) {
             item {
                 Button(
                     onClick = {
-                        auth.signInWithEmailAndPassword(email, password)
+//                        auth.signInWithEmailAndPassword(email, password)
+//                            .addOnCompleteListener { task ->
+//                                if (task.isSuccessful) {
+//                                    navController.navigate("home") {
+//                                        popUpTo("login") { inclusive = true }
+//                                    }
+//                                }
+//                            }
+
+                        auth.signInWithEmailAndPassword(user.email, user.password)
                             .addOnCompleteListener { task ->
                                 if (task.isSuccessful) {
-                                    navController.navigate("home") {
-                                        popUpTo("login") { inclusive = true }
-                                    }
+                                    navController.navigate("home")
+                                } else {
+                                    println("Login failed: ${task.exception?.message}")
+                                    // Handle login failure with SnackBar
                                 }
                             }
+
                     }, modifier = Modifier
                         .padding(vertical = 16.dp)
                         .fillMaxWidth()
@@ -98,4 +115,8 @@ fun LoginScreen(navController: NavController) {
         }
     }
     SnackbarHost(hostState = snackbarHostState)
+
+    LaunchedEffect(key1 = true) {
+        snackbarHostState.showSnackbar("Login failed. Please try again.")
+    }
 }
