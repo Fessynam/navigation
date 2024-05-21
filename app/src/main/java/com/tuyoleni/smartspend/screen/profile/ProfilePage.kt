@@ -30,7 +30,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.google.firebase.auth.FirebaseAuth
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UserScreen(navController: NavController) {
@@ -99,7 +98,24 @@ fun UserScreen(navController: NavController) {
                 .padding(top = padding.calculateTopPadding()),
         ) {
             //TODO: Implement the profile screen
+            item {
+//                LaunchedEffect(Unit) {
+//                    val user = auth.currentUser?.uid?.let {
+//                        FireStoreRepository.getUser(it) { user ->
+//                            // Handle the retrieved user data or error
+//                            if (user != null) {
+//                                // Display the user data in the profile screen
+//                                Text(text = "Name: ${user.name}")
+//                                Text(text = "Email: ${user.email}")
+//                            } else {
+//                                // Error occurred while retrieving user data
+//                                println("Error getting user")
+//                            }
+//                        }
+//                    }
+//                }
 
+            }
         }
     }
 }

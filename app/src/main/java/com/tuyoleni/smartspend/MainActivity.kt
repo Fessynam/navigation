@@ -1,6 +1,7 @@
 package com.tuyoleni.smartspend
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Build.VERSION_CODES.O
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -49,13 +50,14 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
                 val isLoggedIn = auth.currentUser != null
                 val startDestination = if (isLoggedIn) "home" else "login"
+                setupBudgetUpdateListener(this)
 
                 Scaffold(bottomBar = {
                     if (isLoggedIn) {
                         CoroutineScope(Dispatchers.Main).launch {
                             try {
                                 withContext(Dispatchers.IO) {
-                                    generateRandomTransactions() // Execute the function in a background thread
+                                    generateRandomTransactions()
                                 }
                                 println("Random transactions generated successfully!")
                             } catch (e: Exception) {

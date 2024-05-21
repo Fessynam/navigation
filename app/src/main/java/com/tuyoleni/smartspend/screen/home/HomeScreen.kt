@@ -163,7 +163,6 @@ suspend fun loadEarningSpendingData(): Pair<List<MonthlyEarning>, List<MonthlySp
         val monthlyEarning = calculateMonthlyEarnings(earnings)
         monthlyEarning to monthlySpending
     } catch (e: Exception) {
-        // Handle error fetching data
         e.printStackTrace()
         emptyList<MonthlyEarning>() to emptyList<MonthlySpending>()
     }

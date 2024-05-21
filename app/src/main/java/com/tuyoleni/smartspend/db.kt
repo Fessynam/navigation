@@ -24,10 +24,10 @@ val firestore = FirebaseFirestore.getInstance()
 // Firestore Repository
 object FireStoreRepository {
 
-    private const val SPENDING_COLLECTION = "spending"
-    private const val EARNINGS_COLLECTION = "earnings"
-    private const val USERS_COLLECTION = "users"
-    private const val BUDGET_COLLECTION = "budgets"
+     const val SPENDING_COLLECTION = "spending"
+     const val EARNINGS_COLLECTION = "earnings"
+     const val USERS_COLLECTION = "users"
+     const val BUDGET_COLLECTION = "budgets"
 
     private fun updateBudget(documentId: String, budget: Budget) {
         val budgetMap = budget.toMap()

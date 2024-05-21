@@ -28,6 +28,7 @@ fun NotificationScreen(navController: NavController) {
                 .padding(top = padding.calculateTopPadding()),
         ) {
             //TODO: Implement the Notification screen
+            
         }
     }
 }
