@@ -1,5 +1,6 @@
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -31,60 +32,61 @@ import com.tuyoleni.smartspend.data.earnings.earnings
 import com.tuyoleni.smartspend.data.spending.Spending
 import com.tuyoleni.smartspend.data.spending.spending
 import java.time.LocalDate
-
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun BudgetChart(
     spendingData: List<Spending>,
-    earningsData: List<Earnings>,
     date: LocalDate,
     threshHold: Int,
     category: String,
 ) {
-    val filteredSpendingData = spendingData.filter { it.date >= date }
-    val filteredEarningsData = earningsData.filter { it.date >= date }
+    val filteredSpendingData = spendingData.filter { it.date <= date }.sortedBy { it.date }
 
     val spendingValues = filteredSpendingData.map { it.amount }
-    //val dates = filteredSpendingData.map { it.date.toString() }
+
     val chartColor = MaterialTheme.colorScheme.primary
-    //val accountBalance =
-    calculateAccountBalance(filteredSpendingData, filteredEarningsData).toFloat()
 
     val maxSpendingValue = spendingValues.maxOrNull()?.toFloat() ?: 0f
     val maxY = maxOf(threshHold.toFloat() + (maxSpendingValue / 5f))
-    val scrollState = rememberScrollState()
 
-    CartesianChartHost(
-        chart = rememberCartesianChart(
-            rememberLineCartesianLayer(
-                listOf(
-                    rememberLineSpec(
-                        shader = DynamicShader.color(chartColor),
-                        backgroundShader = DynamicShader.verticalGradient(
-                            arrayOf(chartColor.copy(alpha = 0.8f), chartColor.copy(alpha = 0f)),
+    // Use a LazyColumn to display all data points and enable scrolling
+    LazyColumn {
+        item {
+            CartesianChartHost(
+                chart = rememberCartesianChart(
+                    rememberLineCartesianLayer(
+                        listOf(
+                            rememberLineSpec(
+                                shader = DynamicShader.color(chartColor),
+                                backgroundShader = DynamicShader.verticalGradient(
+                                    arrayOf(chartColor.copy(alpha = 0.8f), chartColor.copy(alpha = 0f)),
+                                ),
+                            )
                         ),
-                    )
-                ),
-                axisValueOverrider = AxisValueOverrider.fixed(maxY = maxY),
-            ),
-//            bottomAxis = rememberBottomAxis(),
-//            startAxis = rememberStartAxis(),
-            decorations = listOf(
-                rememberHorizontalLine(
-                    y = { threshHold.toFloat() },
-                    line = rememberLineComponent(
-                        color = Color.DimmedGray.copy(alpha = 0.5f), thickness = 5.dp
+                        axisValueOverrider = AxisValueOverrider.fixed(maxY = maxY),
                     ),
-                    labelComponent = rememberTextComponent(
-                        padding = Dimensions.of(horizontal = 8.dp),
-                        color = MaterialTheme.colorScheme.primary
+//                    bottomAxis = rememberBottomAxis(),
+//                    startAxis = rememberStartAxis(),
+                    decorations = listOf(
+                        rememberHorizontalLine(
+                            y = { threshHold.toFloat() },
+                            line = rememberLineComponent(
+                                color = Color.DimmedGray.copy(alpha = 0.5f), thickness = 5.dp
+                            ),
+                            labelComponent = rememberTextComponent(
+                                padding = Dimensions.of(horizontal = 8.dp),
+                                color = MaterialTheme.colorScheme.primary
+                            ),
+                        ),
                     ),
                 ),
-            ),
-        ), model = CartesianChartModel(LineCartesianLayerModel.build {
-            series(spendingValues)
-        }), horizontalLayout = HorizontalLayout.fullWidth()
-    )
+                model = CartesianChartModel(LineCartesianLayerModel.build {
+                    series(spendingValues)
+                }),
+                horizontalLayout = HorizontalLayout.fullWidth()
+            )
+        }
+    }
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -92,11 +94,10 @@ fun BudgetChart(
 @Composable
 fun BudgetChartPreview() {
     val budget =
-        Budget(threshHold = 10000, created = LocalDate.now().minusDays(5), category = "Food")
+        Budget(user = "simeon", threshHold = 10000, created = LocalDate.now().minusDays(5), category = "Food")
 
     BudgetChart(
         spendingData = spending,
-        earningsData = earnings,
         date = LocalDate.now().minusDays(10),
         threshHold = budget.threshHold,
         category = budget.category

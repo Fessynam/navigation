@@ -25,6 +25,7 @@ import com.tuyoleni.smartspend.data.budget.Budget
 import com.tuyoleni.smartspend.data.spending.spending
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 
 @RequiresApi(O)

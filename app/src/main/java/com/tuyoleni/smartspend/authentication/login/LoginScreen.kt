@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -18,7 +17,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -27,13 +25,15 @@ import androidx.navigation.NavController
 import com.google.firebase.auth.FirebaseAuth
 import com.tuyoleni.smartspend.authentication.User
 import com.tuyoleni.smartspend.components.navigation.top.ScreenTopAppBar
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 
 @Composable
 fun LoginScreen(navController: NavController) {
     var email by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
-    val coroutineScope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() } // Moved outside of LaunchedEffect
     val auth = FirebaseAuth.getInstance()
     val user = User(
@@ -45,7 +45,6 @@ fun LoginScreen(navController: NavController) {
             title = navController.currentBackStackEntry?.destination?.route ?: "Nonexistent"
         )
     }) { padding ->
-        val listState = rememberLazyListState()
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -76,25 +75,18 @@ fun LoginScreen(navController: NavController) {
             item {
                 Button(
                     onClick = {
-//                        auth.signInWithEmailAndPassword(email, password)
-//                            .addOnCompleteListener { task ->
-//                                if (task.isSuccessful) {
-//                                    navController.navigate("home") {
-//                                        popUpTo("login") { inclusive = true }
-//                                    }
-//                                }
-//                            }
-
                         auth.signInWithEmailAndPassword(user.email, user.password)
                             .addOnCompleteListener { task ->
                                 if (task.isSuccessful) {
                                     navController.navigate("home")
                                 } else {
-                                    println("Login failed: ${task.exception?.message}")
-                                    // Handle login failure with SnackBar
+                                    CoroutineScope(Dispatchers.Default).launch {
+                                        snackbarHostState.showSnackbar(
+                                            message = task.exception?.message ?: "Unknown error"
+                                        )
+                                    }
                                 }
                             }
-
                     }, modifier = Modifier
                         .padding(vertical = 16.dp)
                         .fillMaxWidth()
@@ -115,7 +107,6 @@ fun LoginScreen(navController: NavController) {
         }
     }
     SnackbarHost(hostState = snackbarHostState)
-
     LaunchedEffect(key1 = true) {
         snackbarHostState.showSnackbar("Login failed. Please try again.")
     }

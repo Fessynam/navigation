@@ -7,7 +7,7 @@ import showNotification
 
 
 /**
- * Sets up a real-time listener on the Firestore collection specified by BUDGET_COLLECTION.
+ * this is a real-time listener on the Firestore collection specified by BUDGET_COLLECTION.
  * This listener triggers whenever there are changes in the collection (documents added, modified, or removed).
  * When a change is detected, it invokes the showNotification function to display a notification with a message
  * indicating the type of change (added, updated, or removed). This allows the app to provide real-time updates

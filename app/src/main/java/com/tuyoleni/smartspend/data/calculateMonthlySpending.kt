@@ -4,6 +4,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import com.tuyoleni.smartspend.data.spending.MonthlySpending
 import com.tuyoleni.smartspend.data.spending.Spending
+import kotlinx.coroutines.flow.Flow
 
 @RequiresApi(Build.VERSION_CODES.O)
 suspend fun calculateMonthlySpending(data: List<Spending>): List<MonthlySpending> {
@@ -15,6 +16,6 @@ suspend fun calculateMonthlySpending(data: List<Spending>): List<MonthlySpending
     }
 
     return monthlySpending.entries.map { (monthYear, amount) ->
-        MonthlySpending(monthYear.second, monthYear.first, amount)
+        MonthlySpending(monthYear.second, monthYear.first, amount.toInt())
     }.sortedBy { it.year * 100 + it.month }
 }

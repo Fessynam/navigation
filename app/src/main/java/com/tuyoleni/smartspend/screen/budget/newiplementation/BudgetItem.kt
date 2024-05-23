@@ -27,8 +27,7 @@ fun BudgetItem(budget: Budget, spendingData: List<Spending>) {
     ) {
         BudgetChart(
             spendingData = spendingData,
-            earningsData = earnings,
-            date = budget.created.minusDays(500),
+            date = budget.created,
             threshHold = budget.threshHold,
             category = budget.category
         )

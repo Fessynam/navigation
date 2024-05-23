@@ -5,15 +5,14 @@ import android.content.Context
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import com.tuyoleni.smartspend.R
 
-@SuppressLint("MissingPermission")
+@SuppressLint("MissingPermission", "WrongConstant")
 fun showNotification(context: Context, title: String, content: String) {
     val channelId = "budget_updates_channel"
     val channelName = "Budget Updates"
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        val importance = NotificationManager.IMPORTANCE_DEFAULT
+        val importance = NotificationManager.IMPORTANCE_MAX
         val channel = NotificationChannel(channelId, channelName, importance).apply {
             description = "Channel for budget updates"
         }

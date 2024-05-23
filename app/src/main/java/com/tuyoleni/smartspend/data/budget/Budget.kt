@@ -5,6 +5,7 @@ import java.time.LocalDate
 
 
 data class Budget(
+    val user: String,
     val threshHold: Int,
     val created: LocalDate,
     val category: String,
@@ -13,6 +14,7 @@ data class Budget(
     fun toMap(): Map<String, Any> {
         try {
             return mapOf(
+                "user" to user,
                 "threshHold" to threshHold,
                 "created" to created.toString(),
                 "category" to category

@@ -6,7 +6,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.Modifier
 import androidx.compose.foundation.layout.*
@@ -30,10 +29,6 @@ import com.tuyoleni.smartspend.data.earnings.MonthlyEarning
 import com.tuyoleni.smartspend.data.earnings.earnings
 import com.tuyoleni.smartspend.data.spending.MonthlySpending
 import com.tuyoleni.smartspend.data.spending.spending
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-
 @Composable
 fun EarningSpendingChart(earnings: List<MonthlyEarning>, spending: List<MonthlySpending>) {
     Surface(
@@ -43,20 +38,13 @@ fun EarningSpendingChart(earnings: List<MonthlyEarning>, spending: List<MonthlyS
         val red = Color(0xFFFF5D5D)
         val green = Color(0xFF63D167)
 
-        // Find years and months where both earnings and spending exist
-        val commonYearMonths = earnings.map { it.year to it.month }
-            .intersect(spending.map { it.year to it.month }.toSet())
+        val earningValues = earnings.map { it.amount }
+        val spendingValues = spending.map { it.amount }
 
-        val earningValues =
-            earnings.filter { it.year to it.month in commonYearMonths }.map { it.amount }
-        val earningLabels = commonYearMonths.map { "${it.second}/${it.first}" }
+        val totalAccountValue = maxOf(
+            earnings.maxOfOrNull { it.amount } ?: 0f, // Get the maximum amount from the earnings list or 0 if it's empty
+        )
 
-        val spendingValues =
-            spending.filter { it.year to it.month in commonYearMonths }.map { it.amount }
-        val spendingLabels = commonYearMonths.map { "${it.second}/${it.first}" }
-
-        val totalAccountValue = maxOf(earnings.maxOfOrNull { it.amount } ?: 0f,
-            spending.maxOfOrNull { it.amount } ?: 0f)
 
         Box(modifier = Modifier.fillMaxSize()) {
             CartesianChartHost(
