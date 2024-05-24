@@ -14,87 +14,97 @@
  * limitations under the License.
  */
 
-package com.tuyoleni.smartspend.components.vico
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Surface
+import androidx.compose.foundation.layout.height
+import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottomAxis
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStartAxis
-import com.patrykandpatrick.vico.compose.cartesian.decoration.rememberHorizontalLine
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberColumnCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
-import com.patrykandpatrick.vico.compose.cartesian.rememberVicoScrollState
-import com.patrykandpatrick.vico.compose.common.ProvideVicoTheme
-import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
-import com.patrykandpatrick.vico.compose.common.of
-import com.patrykandpatrick.vico.compose.common.vicoTheme
+import com.patrykandpatrick.vico.core.cartesian.axis.AxisItemPlacer
+import com.patrykandpatrick.vico.core.cartesian.data.AxisValueOverrider
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
-import com.patrykandpatrick.vico.core.cartesian.data.ColumnCartesianLayerModel
-import com.patrykandpatrick.vico.core.common.Dimensions
+import com.patrykandpatrick.vico.core.cartesian.data.LineCartesianLayerModel
 
-private val model = CartesianChartModel(ColumnCartesianLayerModel.build { series(1, 2, 3, 4) })
+private val model = CartesianChartModel(LineCartesianLayerModel.build { series(2, -1, 4, -2, 1, 5, -3) })
 
-val Color.Companion.DimmedGray: Color
-    get() = Color(0xFFAAAAAA)
-
+@Preview
 @Composable
-private fun ProvidePreviewVicoTheme(content: @Composable () -> Unit) {
-    Surface(
-        color = Color.Transparent,
-        modifier =
-        Modifier
-            .background(color = Color.LightGray, shape = RoundedCornerShape(size = 4.dp))
-            .padding(8.dp),
-    ) {
-        ProvideVicoTheme(
-            vicoTheme.copy(
-                columnCartesianLayerColors = listOf(Color.DimmedGray),
-                lineColor = Color.DimmedGray,
-                textColor = Color.DimmedGray,
+public fun SingleColumnChartWithNegativeValues() {
+    Surface {
+        CartesianChartHost(
+            modifier = Modifier.height(250.dp),
+            chart =
+            rememberCartesianChart(
+                rememberColumnCartesianLayer(),
+                startAxis =
+                rememberStartAxis(
+                    itemPlacer = remember { AxisItemPlacer.Vertical.count(count = { 9 }) },
+                ),
+                bottomAxis = rememberBottomAxis(),
             ),
-            content,
+            model = model,
         )
     }
 }
 
-@Preview(widthDp = 250)
+@Preview
 @Composable
-fun ThresholdLine() {
-    ProvidePreviewVicoTheme {
+public fun SingleColumnChartWithNegativeValuesAndDataLabels() {
+    Surface {
         CartesianChartHost(
-            modifier = Modifier,
             chart =
             rememberCartesianChart(
-                rememberColumnCartesianLayer(),
+                rememberColumnCartesianLayer(dataLabel = rememberTextComponent()),
                 startAxis = rememberStartAxis(),
                 bottomAxis = rememberBottomAxis(),
-                decorations =
-                listOf(
-                    rememberHorizontalLine(
-                        y = { 3f },
-                        line = rememberLineComponent(
-                            color = Color.DimmedGray.copy(alpha = 0.8f),
-                            thickness = 50.dp
-                        ),
-                        labelComponent =
-                        rememberTextComponent(
-                            Color.Black,
-                            padding = Dimensions.of(horizontal = 8.dp),
-                        ),
-                    ),
-                ),
             ),
             model = model,
-            scrollState = rememberVicoScrollState(scrollEnabled = false),
+        )
+    }
+}
+
+@Preview
+@Composable
+public fun SingleColumnChartWithNegativeValuesAndAxisValuesOverridden() {
+    Surface {
+        CartesianChartHost(
+            chart =
+            rememberCartesianChart(
+                rememberColumnCartesianLayer(axisValueOverrider = AxisValueOverrider.fixed(minY = 1f, maxY = 4f)),
+                startAxis =
+                rememberStartAxis(
+                    itemPlacer = remember { AxisItemPlacer.Vertical.count(count = { 4 }) },
+                ),
+                bottomAxis = rememberBottomAxis(),
+            ),
+            model = model,
+        )
+    }
+}
+
+@Preview
+@Composable
+public fun SingleColumnChartWithNegativeValuesAndAxisValuesOverridden2() {
+    Surface {
+        CartesianChartHost(
+            chart =
+            rememberCartesianChart(
+                rememberColumnCartesianLayer(axisValueOverrider = AxisValueOverrider.fixed(minY = -2f, maxY = 0f)),
+                startAxis =
+                rememberStartAxis(
+                    itemPlacer = remember { AxisItemPlacer.Vertical.count(count = { 3 }) },
+                ),
+                bottomAxis = rememberBottomAxis(),
+            ),
+            model = model,
         )
     }
 }

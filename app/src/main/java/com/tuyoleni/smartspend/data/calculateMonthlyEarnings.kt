@@ -14,6 +14,7 @@ fun calculateMonthlyEarnings(earnings: List<Earnings>): List<MonthlyEarning> {
         monthlyEarnings[monthYear] = monthlyEarnings.getOrDefault(monthYear, 0f) + earning.amount
     }
 
-    return monthlyEarnings.toList().sortedBy { it.first.second * 100 + it.first.first }
-        .map { (monthYear, earning) -> MonthlyEarning(monthYear.second, monthYear.first, earning) }
+    return monthlyEarnings.entries.map { (monthYear, amount) ->
+        MonthlyEarning(monthYear.second, monthYear.first, amount.toInt())
+    }.sortedBy { it.year * 100 + it.month }
 }

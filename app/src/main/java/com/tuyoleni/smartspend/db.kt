@@ -7,6 +7,7 @@ import androidx.annotation.RequiresApi
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.QuerySnapshot
 import com.tuyoleni.smartspend.authentication.User
 import com.tuyoleni.smartspend.data.budget.Budget
 import com.tuyoleni.smartspend.data.earnings.Earnings
@@ -17,21 +18,10 @@ import java.time.LocalDate
 val firestore = FirebaseFirestore.getInstance()
 
 object FireStoreRepository {
-
     private const val SPENDING_COLLECTION = "spending"
-    private const val EARNINGS_COLLECTION = "earnings"
+    private const val EARNINGS_COLLECTION = "earning"
     private const val USERS_COLLECTION = "users"
     const val BUDGET_COLLECTION = "budgets"
-
-    private fun updateBudget(documentId: String, budget: Budget) {
-        val budgetMap = budget.toMap()
-        firestore.collection(BUDGET_COLLECTION).document(documentId).update(budgetMap)
-            .addOnSuccessListener {
-                println("Budget updated with ID: $documentId")
-            }.addOnFailureListener { _ ->
-                // Handle the error
-            }
-    }
 
     @RequiresApi(O)
     private fun toBudget(data: Map<String, Any>): Budget {
@@ -44,13 +34,27 @@ object FireStoreRepository {
     }
 
     @RequiresApi(O)
-    private fun toObjectEarning(data: Map<String, Any>): Earnings {
-        val amount = (data["amount"] as Long).toInt()
-        val createdString = data["date"] as String
-        val date = LocalDate.parse(createdString)
-        val category = data["category"] as String
-        return Earnings(date, category, amount)
+    private fun toObjectEarning(documentSnapshot: DocumentSnapshot): Earnings? {
+        return try {
+            val user = documentSnapshot.getString("user")
+                ?: throw IllegalArgumentException("Missing user field")
+            val dateString = documentSnapshot.getString("date")
+                ?: throw IllegalArgumentException("Missing date field")
+            val date = LocalDate.parse(dateString)
+            val category = documentSnapshot.getString("category") ?: throw IllegalArgumentException(
+                "Missing category field"
+            )
+            val amount = documentSnapshot.getString("amount")?.toInt()
+                ?: throw IllegalArgumentException("Missing or invalid amount field")
+
+            Earnings(user, date, category, amount)
+        } catch (e: Exception) {
+            Log.e(TAG, "toObjectEarning: ", e)
+            null
+        }
     }
+
+
 
     @RequiresApi(O)
     private fun toObjectSpending(documentSnapshot: DocumentSnapshot): Spending? {
@@ -74,7 +78,7 @@ object FireStoreRepository {
     }
 
 
-    suspend fun addUser(user: User) {
+    fun addUser(user: User) {
         firestore.collection(USERS_COLLECTION).add(user).addOnSuccessListener { documentReference ->
             println("User added with ID: ${documentReference.id}")
         }.addOnFailureListener { e ->
@@ -82,9 +86,8 @@ object FireStoreRepository {
         }
     }
 
-    suspend fun addBudget(budget: Budget) {
+    fun addBudget(budget: Budget) {
         try {
-            val currentUserEmail = FirebaseAuth.getInstance().currentUser?.email
             val budgetMap = budget.toMap()
             firestore.collection(BUDGET_COLLECTION).add(budgetMap)
                 .addOnSuccessListener { documentReference ->
@@ -98,7 +101,7 @@ object FireStoreRepository {
     }
 
     @RequiresApi(O)
-    suspend fun getBudget(callback: (List<Budget>) -> Unit) {
+    fun getBudget(callback: (List<Budget>) -> Unit) {
         val currentUserEmail = FirebaseAuth.getInstance().currentUser?.email
 
         firestore.collection(BUDGET_COLLECTION).whereEqualTo("user", currentUserEmail).get()
@@ -117,7 +120,7 @@ object FireStoreRepository {
             }
     }
 
-    suspend fun deleteBudget(budget: Budget) {
+    fun deleteBudget(budget: Budget) {
         firestore.collection(BUDGET_COLLECTION).whereEqualTo("category", budget.category).get()
             .addOnSuccessListener { documents ->
                 if (documents.isEmpty) {
@@ -152,18 +155,32 @@ object FireStoreRepository {
 
     @RequiresApi(O)
     fun getEarnings(): List<Earnings> {
-        val earningsList = mutableListOf<Earnings>()
+        val earningsList: MutableList<Earnings> = mutableListOf()
         val currentUserEmail = FirebaseAuth.getInstance().currentUser?.email
 
-        firestore.collection(EARNINGS_COLLECTION).whereEqualTo("user", currentUserEmail).get()
-            .addOnSuccessListener { documents ->
-                for (document in documents) {
-                    val earnings = toObjectEarning(document.data)
-                    earningsList.add(earnings)
-                }
-            }.addOnFailureListener { e ->
-                println("Error getting Earnings: ${e.message}")
+        // Query the Firestore collection for earnings belonging to the current user
+        val query = firestore.collection(EARNINGS_COLLECTION).whereEqualTo("user", currentUserEmail)
+
+        // Add a snapshot listener to the query
+        query.addSnapshotListener { snapshot, error ->
+            if (error != null) {
+                Log.e(TAG, "Error getting earnings: ${error.message}")
+                return@addSnapshotListener
             }
+
+            // Clear the existing earnings list
+            earningsList.clear()
+
+            // Iterate through the snapshot documents and convert them to Earnings objects
+            for (document in snapshot!!.documents) {
+                val earning = toObjectEarning(document)
+                if (earning != null) {
+                    earningsList.add(earning)
+                }
+            }
+        }
+
+        // Return the earnings list
         return earningsList
     }
 }

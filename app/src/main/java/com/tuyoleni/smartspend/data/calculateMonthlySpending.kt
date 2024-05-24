@@ -4,7 +4,6 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import com.tuyoleni.smartspend.data.spending.MonthlySpending
 import com.tuyoleni.smartspend.data.spending.Spending
-import kotlinx.coroutines.flow.Flow
 
 @RequiresApi(Build.VERSION_CODES.O)
 suspend fun calculateMonthlySpending(data: List<Spending>): List<MonthlySpending> {
