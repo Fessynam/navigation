@@ -2,6 +2,7 @@ package com.tuyoleni.smartspend.components.vico.linechart
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -16,6 +17,7 @@ import com.patrykandpatrick.vico.compose.cartesian.fullWidth
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineSpec
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
+import com.patrykandpatrick.vico.compose.cartesian.segmented
 import com.patrykandpatrick.vico.compose.common.shader.color
 import com.patrykandpatrick.vico.compose.common.shader.verticalGradient
 import com.patrykandpatrick.vico.core.cartesian.HorizontalLayout
@@ -38,15 +40,13 @@ fun EarningSpendingChart(earnings: List<Earnings>, spending: List<Spending>) {
         val earningValues = earnings.map { it.amount }
         val spendingValues = spending.map { it.amount }
         val maxSpendingValue = spendingValues.maxOrNull()?.toFloat() ?: 0f
-
         val maxEarningValue = earningValues.maxOrNull()?.toFloat() ?: 0f
-
-
         val maxY = max(maxEarningValue.toFloat(), maxSpendingValue)
 
-
-        if (earningValues.isNotEmpty() || spendingValues.isNotEmpty()) {
-            Box(modifier = Modifier.fillMaxSize()) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            if (earningValues.isEmpty() && spendingValues.isEmpty()) {
+                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+            } else {
                 CartesianChartHost(
                     chart = rememberCartesianChart(
                         rememberLineCartesianLayer(
@@ -66,38 +66,45 @@ fun EarningSpendingChart(earnings: List<Earnings>, spending: List<Spending>) {
                             ),
                             axisValueOverrider = AxisValueOverrider.fixed(maxY = maxY),
                         ),
-                    ), model = CartesianChartModel(LineCartesianLayerModel.build {
-                        series(earningValues)
-                        series(spendingValues)
-                    }), horizontalLayout = HorizontalLayout.fullWidth()
+                    ),
+                    model = if (earningValues.isNotEmpty() && spendingValues.isNotEmpty()) {
+                        CartesianChartModel(LineCartesianLayerModel.build {
+                            series(earningValues)
+                            series(spendingValues)
+                        })
+                    } else if (earningValues.isNotEmpty()) {
+                        CartesianChartModel(LineCartesianLayerModel.build {
+                            series(earningValues)
+                        })
+                    } else {
+                        CartesianChartModel(LineCartesianLayerModel.build {
+                            series(spendingValues)
+                        })
+                    },
+                    horizontalLayout = if (earningValues.isNotEmpty() && spendingValues.isNotEmpty()) {
+                        HorizontalLayout.fullWidth()
+                    } else {
+                        HorizontalLayout.fullWidth()
+                    }
                 )
                 Column(
                     modifier = Modifier
                         .align(Alignment.BottomStart)
                         .padding(12.dp)
                 ) {
-                    Text(
-                        text = "Recent Earnings: ${earningValues[earningValues.lastIndex]}",
-                        fontSize = 10.sp,
-                        lineHeight = 16.sp
-
-                    )
-
-                    Text(
-                        text = "Recent Spending: ${spendingValues[spendingValues.lastIndex]}",
-                        fontSize = 10.sp,
-                        lineHeight = 16.sp
-                    )
+                    if (earningValues.isNotEmpty() && spendingValues.isNotEmpty()) {
+                        Text(
+                            text = "Recent Earnings: ${earningValues[earningValues.lastIndex]}",
+                            fontSize = 10.sp,
+                            lineHeight = 16.sp
+                        )
+                        Text(
+                            text = "Recent Spending: ${spendingValues[spendingValues.lastIndex]}",
+                            fontSize = 10.sp,
+                            lineHeight = 16.sp
+                        )
+                    }
                 }
-            }
-        } else {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(text = "No data available", color = Color.Gray)
             }
         }
     }
